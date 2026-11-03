@@ -32,9 +32,12 @@
   html{scroll-behavior:smooth}
   body{margin:0; background:var(--bg); color:var(--ink);
     font-family:var(--sans); font-size:16px; line-height:1.65;
+    text-rendering:optimizeLegibility;
     padding-left:max(16px, env(safe-area-inset-left,0px));
     padding-right:max(16px, env(safe-area-inset-right,0px));
     -webkit-font-smoothing:antialiased;}
+  p{text-wrap:pretty}
+  code{font-kerning:none}
 
   /* ---------- ambient background ---------- */
   .bgfx{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
@@ -74,8 +77,8 @@
     padding:7px 15px; border-radius:999px; background:rgba(255,255,255,.02)}
   .chiptag .live{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green)}
   .chiptag b{color:var(--ink); font-weight:600; letter-spacing:.02em; text-transform:none}
-  h1{font-family:var(--serif); font-weight:400; font-size:clamp(46px,8.4vw,86px);
-    line-height:1.02; letter-spacing:-.02em; margin:26px 0 18px; text-wrap:balance}
+  h1{font-family:var(--serif); font-weight:400; font-size:clamp(44px,7.6vw,78px);
+    line-height:1.05; letter-spacing:-.012em; margin:26px auto 18px; max-width:16ch; text-wrap:balance}
   h1 em{font-style:italic; color:var(--accent)}
   .sub{color:var(--muted); max-width:46ch; margin:0 auto 32px; font-size:17.5px; font-weight:400}
   .sub code{font-family:var(--mono); font-size:.86em; color:var(--accent); background:rgba(200,255,74,.08); padding:2px 9px; border-radius:6px; border:1px solid rgba(200,255,74,.18)}
@@ -291,8 +294,10 @@
   .cmp-card h4{font-family:var(--display); margin:10px 0 3px; font-size:18px; font-weight:600}
   .cmp-sub{margin:0 0 16px; color:var(--faint); font-size:12px; letter-spacing:.05em; text-transform:uppercase; font-weight:600}
   .cmp-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--muted)}
-  .cmp-card li{padding-left:21px; position:relative}
-  .cmp-card li::before{content:"✓"; position:absolute; left:0; color:var(--green); font-weight:700}
+  .cmp-card li{display:flex; gap:10px; align-items:flex-start}
+  .cmp-card li::before{content:"✓"; flex:none; width:16px; height:16px; margin-top:1px; border-radius:50%;
+    background:rgba(61,220,126,.14); color:var(--green); font-size:11px; font-weight:700;
+    display:grid; place-items:center}
   .cmp-card li b{color:var(--ink)}
   .cmp-card .btn{margin-top:20px; width:100%; justify-content:center}
 
@@ -641,20 +646,25 @@
 
 /* ===== v3.5: title stagger, scroll progress, cursor glow, tilt ===== */
 (function(){
-  // headline word stagger
+  // headline word stagger (spaces kept as real text nodes so words don't jam)
   var h1=document.querySelector('h1');
   if(h1){
-    var words=[];
-    h1.childNodes.forEach(function(n){
-      if(n.nodeType===3){ n.textContent.split(/(\s+)/).forEach(function(t){ if(t) words.push({t:t}); }); }
-      else if(n.nodeName==='EM'){ n.innerHTML.split(/(\s+)/).forEach(function(t){ if(t) words.push({t:t,em:true}); }); }
+    var frag=document.createDocumentFragment(), wi=0;
+    function word(t,em){
+      var s=document.createElement('span'); s.className='wd'; s.textContent=t; s.style.animationDelay=(0.12+wi*0.045)+'s'; wi++;
+      if(em){ var e=document.createElement('em'); e.appendChild(s); frag.appendChild(e); } else frag.appendChild(s);
+    }
+    function run(str,em){
+      str.split(/(\s+)/).forEach(function(t){
+        if(!t) return;
+        if(/^\s+$/.test(t)) frag.appendChild(document.createTextNode(' ')); else word(t,em);
+      });
+    }
+    Array.prototype.slice.call(h1.childNodes).forEach(function(n){
+      if(n.nodeType===3) run(n.textContent,false);
+      else if(n.nodeName==='EM') run(n.textContent,true);
     });
-    h1.innerHTML='';
-    words.forEach(function(p,i){
-      var s=document.createElement('span'); s.className='wd'; s.textContent=p.t;
-      s.style.animationDelay=(0.12+i*0.045)+'s';
-      if(p.em){ var e=document.createElement('em'); e.appendChild(s); h1.appendChild(e); } else h1.appendChild(s);
-    });
+    h1.innerHTML=''; h1.appendChild(frag);
   }
   // scroll progress
   var bar=document.getElementById('gradTop');
