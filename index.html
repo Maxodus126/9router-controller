@@ -1,185 +1,247 @@
 <title>9Router Controller Pro</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  /* ===== 9Router Controller Pro — product landing v2 =====
-     Premium dark dev-tool aesthetic. Accurate 1:1 interactive replica of the
-     actual CustomTkinter app (colors # pick from app.py: #141414 window,
-     #1b1b1f frames, #0e0e11 console, green #2e7d32, red #ff5b5b, amber #f5b64b).
-     Layout: split hero (copy + live app window) → features → status → download
-             → support → footer.
-     Type: Space Grotesk (display) + Inter (body) + JetBrains Mono (console).
+  /* ===== 9Router Controller Pro — landing v3 (premium editorial dark) =====
+     Research-driven (Linear / Raycast patterns):
+       • two-tier type: serif display (Instrument Serif) + sans UI (Inter) +
+         Space Grotesk for wordmark, JetBrains Mono for code/console.
+       • restrained palette: near-black base, monochrome, sparse lime accent,
+         color reserved for status pills (green/amber/red/blue).
+       • depth via soft radial glow behind the product window, thin hair
+         borders, no heavy cards; editorial "Fig 0.x" captions.
+       • real product shown as a faithful 1:1 interactive replica of app.py
+         (colors #141414 / #1b1b1f / #0e0e11, green #2e7d32, red #b3261e).
+       • motion: staggered load, IntersectionObserver scroll-reveal, floating
+         window, ambient glow pulse. The demo auto-starts to feel alive.
   */
   :root{
-    --bg:#07080a; --surface:#101216; --surface-2:#161920; --surface-3:#1d212a;
-    --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.14);
-    --ink:#ededf0; --muted:#9ba1a9; --faint:#666d76;
-    --accent:#b6ff3f; --accent-deep:#8fd11f;
-    --green:#4caf50; --green-soft:#42e08a;
-    --amber:#f5b64b; --red:#ff5b5b;
+    --bg:#050608; --bg-2:#0b0d10; --surface:#0d0f13; --surface-2:#13161c; --surface-3:#1a1e26;
+    --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.13);
+    --ink:#eceef1; --muted:#9aa1ab; --faint:#636a74;
+    --accent:#c8ff4a; --accent-deep:#9be01f;
+    --green:#3ddc7e; --amber:#f5b64b; --red:#ff5b5b; --blue:#7aa2ff;
     --app-bg:#141414; --app-frame:#1b1b1f; --app-console:#0e0e11; --app-btn:#26262b;
+    --serif:"Instrument Serif",Georgia,serif;
+    --sans:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
+    --display:"Space Grotesk",var(--sans);
     --mono:"JetBrains Mono","Cascadia Mono",Consolas,monospace;
     color-scheme: dark;
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0; background:var(--bg); color:var(--ink);
-    font-family:"Inter","Segoe UI",system-ui,-apple-system,sans-serif;
-    font-size:16px; line-height:1.6;
+    font-family:var(--sans); font-size:16px; line-height:1.65;
     padding-left:max(16px, env(safe-area-inset-left,0px));
-    padding-right:max(16px, env(safe-area-inset-right,0px));}
-  .bgfx{position:fixed; inset:0; z-index:0; pointer-events:none;
+    padding-right:max(16px, env(safe-area-inset-right,0px));
+    -webkit-font-smoothing:antialiased;}
+
+  /* ---------- ambient background ---------- */
+  .bgfx{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;
     background:
-      radial-gradient(880px 520px at 10% -8%, rgba(182,255,63,.10), transparent 62%),
-      radial-gradient(760px 500px at 92% 6%, rgba(66,224,138,.07), transparent 60%),
-      radial-gradient(1100px 760px at 50% 118%, rgba(124,147,255,.06), transparent 70%);}
-  .wrap{position:relative; z-index:1; max-width:1100px; margin:0 auto; padding-block:0 90px}
+      radial-gradient(1000px 620px at 12% -10%, rgba(200,255,74,.07), transparent 60%),
+      radial-gradient(880px 560px at 96% -4%, rgba(61,220,126,.05), transparent 60%),
+      radial-gradient(1200px 900px at 50% 122%, rgba(122,162,255,.05), transparent 70%);}
+  .bgfx::after{content:""; position:absolute; inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.028) 1px, transparent 1px);
+    background-size:34px 34px; mask-image:radial-gradient(620px 420px at 50% 12%, #000, transparent 75%);}
+  .wrap{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding-block:0 96px}
+
+  /* ---------- reveal / motion ---------- */
+  .reveal{opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1; transform:none; transition:none} .float{animation:none!important} .halo{animation:none!important} }
 
   /* ---------- nav ---------- */
-  nav{display:flex; align-items:center; gap:18px; padding:20px 0 24px;
-    position:sticky; top:0; z-index:20; background:linear-gradient(180deg,var(--bg) 74%, transparent);}
-  .logo{display:flex; align-items:center; gap:11px; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:17px; letter-spacing:.01em}
+  nav{display:flex; align-items:center; gap:20px; padding:18px 0 20px;
+    position:sticky; top:0; z-index:30; backdrop-filter:blur(12px);
+    background:linear-gradient(180deg,rgba(5,6,8,.85), rgba(5,6,8,.55) 78%, transparent);
+    -webkit-backdrop-filter:blur(12px)}
+  .logo{display:flex; align-items:center; gap:11px; font-family:var(--display); font-weight:600; font-size:16.5px; letter-spacing:.01em}
   .logo .mark{width:32px; height:32px; border-radius:9px; display:grid; place-items:center;
-    background:linear-gradient(135deg,var(--accent),#5fd0a0); color:#0a0b0d; font-size:15px;
-    box-shadow:0 4px 16px -4px rgba(182,255,63,.5)}
-  .logo b{color:var(--accent)}
-  .navlinks{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
-  .navlinks a{color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding:7px 12px; border-radius:8px; transition:.15s}
+    background:linear-gradient(135deg,var(--accent),#5fd0a0); color:#0a0b0d; font-size:15px; font-weight:700;
+    box-shadow:0 0 0 1px rgba(200,255,74,.35), 0 6px 18px -6px rgba(200,255,74,.5)}
+  .logo b{color:var(--accent); font-weight:600}
+  .navlinks{display:flex; gap:4px; margin-left:auto; align-items:center; flex-wrap:wrap}
+  .navlinks a{color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding:8px 13px; border-radius:9px; transition:.15s}
   .navlinks a:hover{color:var(--ink); background:var(--surface-2)}
-  .navlinks .pill{color:var(--accent); border:1px solid rgba(182,255,63,.35); background:rgba(182,255,63,.06)}
+  .navlinks .pill{color:var(--accent); border:1px solid rgba(200,255,74,.3); background:rgba(200,255,74,.06)}
 
-  /* ---------- hero (split) ---------- */
-  header.hero{display:grid; grid-template-columns:1.05fr 1fr; gap:34px; align-items:center; padding:30px 0 56px}
-  .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.14em;
+  /* ---------- hero ---------- */
+  header.hero{text-align:center; padding:44px 0 30px; max-width:820px; margin:0 auto}
+  .chiptag{display:inline-flex; align-items:center; gap:9px; font-size:12px; letter-spacing:.13em;
     text-transform:uppercase; color:var(--muted); border:1px solid var(--hair-2);
     padding:7px 15px; border-radius:999px; background:rgba(255,255,255,.02)}
-  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green-soft); box-shadow:0 0 10px var(--green-soft)}
-  h1{font-family:"Space Grotesk",sans-serif; font-size:clamp(34px,5.4vw,58px); font-weight:700;
-    letter-spacing:-.03em; line-height:1.02; margin:20px 0 12px}
-  h1 em{font-style:normal; background:linear-gradient(90deg,var(--accent),#5fd0a0); -webkit-background-clip:text; background-clip:text; color:transparent}
-  .sub{color:var(--muted); max-width:46ch; margin:0 0 30px; font-size:17px}
-  .sub code{font-family:var(--mono); font-size:.9em; color:var(--accent); background:var(--surface-2); padding:2px 8px; border-radius:6px}
-  .herobtns{display:flex; gap:12px; flex-wrap:wrap}
-  .btn{display:inline-flex; align-items:center; gap:10px; padding:14px 24px; border-radius:12px;
-    font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:15px; text-decoration:none; transition:.18s}
-  .btn.primary{background:var(--accent); color:#0a0b0d; box-shadow:0 12px 32px -10px rgba(182,255,63,.55)}
-  .btn.primary:hover{transform:translateY(-2px); box-shadow:0 16px 40px -10px rgba(182,255,63,.6)}
+  .chiptag .live{width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green)}
+  .chiptag b{color:var(--ink); font-weight:600; letter-spacing:.02em; text-transform:none}
+  h1{font-family:var(--serif); font-weight:400; font-size:clamp(46px,8.4vw,86px);
+    line-height:1.02; letter-spacing:-.02em; margin:26px 0 18px; text-wrap:balance}
+  h1 em{font-style:italic; color:var(--accent)}
+  .sub{color:var(--muted); max-width:46ch; margin:0 auto 32px; font-size:17.5px; font-weight:400}
+  .sub code{font-family:var(--mono); font-size:.86em; color:var(--accent); background:rgba(200,255,74,.08); padding:2px 9px; border-radius:6px; border:1px solid rgba(200,255,74,.18)}
+  .herobtns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .btn{display:inline-flex; align-items:center; gap:10px; padding:14px 26px; border-radius:12px;
+    font-family:var(--display); font-weight:600; font-size:15px; text-decoration:none;
+    transition:transform .18s, box-shadow .18s, border-color .18s, background .18s}
+  .btn.primary{background:var(--accent); color:#0a0b0d; box-shadow:0 14px 38px -12px rgba(200,255,74,.5), inset 0 -2px 0 rgba(0,0,0,.14)}
+  .btn.primary:hover{transform:translateY(-2px); box-shadow:0 20px 48px -12px rgba(200,255,74,.6)}
   .btn.ghost{border:1px solid var(--hair-2); color:var(--ink); background:var(--surface)}
   .btn.ghost:hover{border-color:var(--accent); color:var(--accent)}
-  .btn .meta{font-family:"Inter",sans-serif; font-weight:500; font-size:12.5px; opacity:.65}
-  .herometa{display:flex; gap:22px; flex-wrap:wrap; margin-top:26px; color:var(--faint); font-size:13px}
+  .btn .meta{font-family:var(--sans); font-weight:500; font-size:12.5px; opacity:.68}
+  .herometa{display:flex; gap:26px; justify-content:center; flex-wrap:wrap; margin-top:28px; color:var(--faint); font-size:13px}
   .herometa b{color:var(--muted); font-weight:600}
-  .herometa .ok{color:var(--green-soft)}
+  .herometa .ok{color:var(--green)}
 
-  /* ---------- app window replica (real UI) ---------- */
-  .scene{position:relative}
-  .scene .halo{position:absolute; inset:-60px -40px; z-index:0; pointer-events:none;
-    background:radial-gradient(340px 260px at 50% 20%, rgba(182,255,63,.12), transparent 70%)}
-  .app{position:relative; z-index:1; width:100%; max-width:440px; margin:0 auto;
-    background:var(--app-bg); border-radius:16px; border:1px solid var(--hair-2);
-    box-shadow:0 34px 80px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.03);
-    font-size:13px; overflow:hidden; color:#e8e8ec}
-  .app .titlebar{display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.06);
+  /* ---------- app window (the real app) ---------- */
+  .scene{position:relative; margin-top:54px; max-width:520px; margin-left:auto; margin-right:auto}
+  .float{animation:floaty 9s ease-in-out infinite}
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+  .halo{position:absolute; inset:-70px -60px; z-index:0; pointer-events:none; border-radius:50%;
+    background:radial-gradient(430px 340px at 50% 46%, rgba(200,255,74,.14), rgba(61,220,126,.05) 45%, transparent 70%);
+    animation:glowpulse 7s ease-in-out infinite}
+  @keyframes glowpulse{0%,100%{opacity:.75}50%{opacity:1}}
+  .app{position:relative; z-index:1; background:var(--app-bg); border-radius:18px;
+    border:1px solid rgba(255,255,255,.12); overflow:hidden;
+    box-shadow:0 50px 110px -38px rgba(0,0,0,.95), 0 0 0 1px rgba(255,255,255,.03), 0 0 80px -20px rgba(200,255,74,.12);
+    font-size:13px; color:#e8e8ec; transform:rotateX(2deg)}
+  .app .titlebar{display:flex; align-items:center; gap:8px; padding:12px 15px; border-bottom:1px solid rgba(255,255,255,.06);
     background:rgba(255,255,255,.02)}
   .app .titlebar .dot{width:11px; height:11px; border-radius:50%}
   .app .titlebar .g{background:#28c840} .app .titlebar .y{background:#febc2e} .app .titlebar .r{background:#ff5f57}
-  .app .titlebar span.ttl{flex:1; text-align:center; font-size:12px; color:#b9b9c2; font-weight:500; letter-spacing:.02em}
-  .app .titlebar .tray{font-size:11px; color:#6a6a74}
-  .app .pad{padding:14px}
-  .app .head{background:var(--app-frame); border-radius:12px; padding:14px 16px 12px}
-  .app .statusline{font-size:18px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:8px}
-  .app .statusline .dot{width:10px; height:10px; border-radius:50%; background:var(--red); box-shadow:0 0 0 0 rgba(255,91,91,.5); animation:pulse 2.2s infinite}
+  .app .titlebar .ttl{flex:1; text-align:center; font-size:12px; color:#b9b9c2; font-weight:500; letter-spacing:.03em}
+  .app .titlebar .livebadge{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--green); border:1px solid rgba(61,220,126,.35); padding:3px 8px; border-radius:999px; background:rgba(61,220,126,.08)}
+  .app .pad{padding:15px}
+  .app .head{background:var(--app-frame); border-radius:13px; padding:15px 17px 13px}
+  .app .statusline{font-size:19px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:9px; font-family:var(--display)}
+  .app .statusline .dot{width:10px; height:10px; border-radius:50%; background:var(--red); animation:pulse 2.2s infinite}
   @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,91,91,.5)}70%{box-shadow:0 0 0 9px rgba(255,91,91,0)}100%{box-shadow:0 0 0 0 rgba(255,91,91,0)}}
-  .app .meta{display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#9a9aa2; font-family:var(--mono)}
-  .app .toggle{margin-top:10px; height:54px; width:100%; border:0; border-radius:12px; cursor:pointer;
-    font-family:"Space Grotesk",sans-serif; font-size:16px; font-weight:700; letter-spacing:.02em;
-    background:var(--green); color:#fff; transition:background .18s}
-  .app .toggle:hover{background:#388e3c}
-  .app .toggle.off{background:#b3261e}
+  .app .meta{display:flex; justify-content:space-between; margin-top:7px; font-size:12px; color:#9a9aa2; font-family:var(--mono)}
+  .app .toggle{margin-top:11px; height:55px; width:100%; border:0; border-radius:13px; cursor:pointer;
+    font-family:var(--display); font-size:16px; font-weight:700; letter-spacing:.04em;
+    background:var(--green); color:#0a0b0d; transition:transform .12s, background .2s; box-shadow:inset 0 -2px 0 rgba(0,0,0,.14)}
+  .app .toggle:hover{background:#2e7d32; color:#fff; transform:translateY(-1px)}
+  .app .toggle.off{background:#b3261e; color:#fff}
   .app .toggle.off:hover{background:#c9302c}
-  .app .toggle.busy{background:#5a5a60; cursor:wait}
-  .app .actions{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px}
-  .app .actions button{height:38px; border:0; border-radius:10px; cursor:pointer; font-family:"Inter",sans-serif;
-    font-size:12px; font-weight:500; color:#d8d8e0; background:var(--app-btn); transition:background .15s}
-  .app .actions button:hover{background:#2f2f36}
-  .app .console{background:var(--app-frame); border-radius:12px; margin-top:8px; padding:12px; min-height:182px; display:flex; flex-direction:column}
-  .app .console .chead{display:flex; align-items:center; font-size:13px; font-weight:700; color:#c8c8d0; padding-bottom:8px}
+  .app .toggle.busy{background:#5a5a60; color:#d8d8e0; cursor:wait}
+  .app .actions{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:9px}
+  .app .actions button{height:39px; border:0; border-radius:10px; cursor:pointer; font-family:var(--sans);
+    font-size:12px; font-weight:500; color:#d8d8e0; background:var(--app-btn); transition:background .15s, transform .1s}
+  .app .actions button:hover{background:#2f2f36; transform:translateY(-1px)}
+  .app .console{background:var(--app-frame); border-radius:13px; margin-top:9px; padding:13px}
+  .app .console .chead{display:flex; align-items:center; font-size:13px; font-weight:700; color:#c8c8d0; font-family:var(--display); padding-bottom:9px}
   .app .console .chead .clear{margin-left:auto; font-size:11px; color:#b9b9c2; background:var(--app-btn);
-    border:0; border-radius:8px; padding:4px 12px; cursor:pointer; font-family:"Inter",sans-serif}
+    border:0; border-radius:8px; padding:4px 13px; cursor:pointer; font-family:var(--sans)}
   .app .console .chead .clear:hover{background:#2f2f36}
-  .app .console .clog{flex:1; background:var(--app-console); border-radius:8px; padding:9px 11px;
-    font-family:var(--mono); font-size:11px; line-height:1.7; color:#d4d4d8; min-height:130px;
-    overflow:hidden}
-  .app .console .clog .ln{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .app .console .clog{background:var(--app-console); border-radius:9px; padding:10px 12px; min-height:134px;
+    font-family:var(--mono); font-size:11px; line-height:1.75; color:#d4d4d8}
+  .app .console .clog .ln{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; animation:typein .3s ease}
+  @keyframes typein{from{opacity:0; transform:translateY(3px)}to{opacity:1; transform:none}}
   .app .console .clog .ln .t{color:#56565e}
-  .app .console .clog .ok{color:var(--green-soft)}
+  .app .console .clog .ok{color:var(--green)}
   .app .console .clog .err{color:#ff6b5e}
   .app .console .clog .warn{color:var(--amber)}
   .app .console .clog .info{color:#8ec9ff}
-  .app .checks{padding:12px 16px 14px; display:flex; flex-direction:column; gap:7px; font-size:12px; color:#b9b9c2}
+  .app .checks{padding:13px 17px 15px; display:flex; flex-direction:column; gap:8px; font-size:12px; color:#b9b9c2}
   .app .checks label{display:flex; align-items:center; gap:9px; cursor:pointer}
   .app .checks input{appearance:none; width:17px; height:17px; border-radius:6px; border:1px solid #3a3a42;
-    background:rgba(255,255,255,.03); cursor:pointer; position:relative}
+    background:rgba(255,255,255,.03); position:relative}
   .app .checks input:checked{background:var(--accent); border-color:var(--accent)}
   .app .checks input:checked::after{content:""; position:absolute; left:5px; top:2px; width:4px; height:9px;
     border:solid #0a0b0d; border-width:0 2px 2px 0; transform:rotate(45deg)}
-  .app .checks input:disabled{opacity:.45}
+  .figcap{display:flex; align-items:center; justify-content:center; gap:10px; margin-top:22px; color:var(--faint); font-size:12.5px; font-family:var(--mono)}
+  .figcap b{color:var(--muted); font-weight:500}
+  .figcap .sep{width:26px; height:1px; background:var(--hair-2)}
 
   /* ---------- sections ---------- */
-  section.block{padding:58px 0 8px; scroll-margin-top:70px}
-  .sec-eyebrow{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); font-weight:600; display:flex; align-items:center; gap:10px}
-  .sec-eyebrow::before{content:""; width:22px; height:1px; background:var(--accent-deep)}
-  h2{font-family:"Space Grotesk",sans-serif; font-size:clamp(25px,3.8vw,36px); font-weight:700; letter-spacing:-.02em; margin:8px 0 12px; text-wrap:balance}
-  .lead{color:var(--muted); max-width:62ch; margin:0 0 34px; font-size:16px}
+  section.block{padding:66px 0 6px; scroll-margin-top:80px}
+  .sec-eyebrow{font-size:11.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--faint); font-weight:600; display:flex; align-items:center; gap:12px}
+  .sec-eyebrow::before{content:""; width:24px; height:1px; background:var(--accent-deep)}
+  h2{font-family:var(--serif); font-weight:400; font-size:clamp(32px,5vw,46px); line-height:1.08;
+    letter-spacing:-.01em; margin:10px 0 14px; text-wrap:balance}
+  h2 em{font-style:italic; color:var(--accent)}
+  .lead{color:var(--muted); max-width:60ch; margin:0 0 36px; font-size:16.5px}
 
-  /* feature card */
-  .feat{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
-  .feat .card{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:20px; transition:.2s; position:relative; overflow:hidden}
-  .feat .card:hover{border-color:var(--hair-2); transform:translateY(-3px)}
-  .feat .card:hover::before{opacity:1}
-  .feat .card::before{content:""; position:absolute; top:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg,var(--accent),transparent); opacity:0; transition:.2s}
-  .feat h3{margin:0 0 6px; font-size:16px; font-weight:600; font-family:"Space Grotesk",sans-serif; display:flex; align-items:center; gap:10px}
-  .feat h3 .ic{width:32px; height:32px; border-radius:9px; background:var(--surface-3); display:grid; place-items:center; font-size:16px; flex:none}
-  .feat p{margin:0; font-size:14px; color:var(--muted)}
-  .feat code{font-family:var(--mono); font-size:11.5px; color:var(--accent); background:var(--surface-2); padding:1px 6px; border-radius:5px}
+  /* ---------- feature pillars ---------- */
+  .pillars{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px}
+  .pillar{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:22px 20px; transition:border-color .25s, transform .25s}
+  .pillar:hover{border-color:var(--hair-2); transform:translateY(-3px)}
+  .pillar .ic{font-size:22px}
+  .pillar h3{font-family:var(--display); margin:14px 0 4px; font-size:15px; font-weight:600; line-height:1.25}
+  .pillar .tag{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent)}
+  .pillar p{margin:8px 0 0; font-size:13.5px; color:var(--muted)}
+
+  /* ---------- bento feature grid ---------- */
+  .bento{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  .tile{background:var(--surface); border:1px solid var(--hair); border-radius:18px; padding:24px; transition:border-color .25s, transform .25s; position:relative; overflow:hidden}
+  .tile:hover{border-color:var(--hair-2); transform:translateY(-3px)}
+  .tile .eyeb{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); font-weight:600; display:flex; align-items:center; gap:8px}
+  .tile h3{font-family:var(--display); margin:12px 0 6px; font-size:19px; font-weight:600}
+  .tile p{margin:0 0 16px; font-size:14px; color:var(--muted)}
+  .tile .viz{margin:0 -24px -24px; padding:18px 20px 20px; background:var(--bg-2); border-top:1px solid var(--hair)}
+  .tile.wide{grid-column:span 2}
+
+  /* mini status chip */
+  .chip{display:inline-flex; align-items:center; gap:7px; font-size:12px; font-weight:600;
+    padding:5px 12px; border-radius:999px; border:1px solid}
+  .chip .d{width:8px; height:8px; border-radius:50%}
+  .chip.g{color:var(--green); border-color:rgba(61,220,126,.32); background:rgba(61,220,126,.08)} .chip.g .d{background:var(--green)}
+  .chip.a{color:var(--amber); border-color:rgba(245,182,75,.32); background:rgba(245,182,75,.08)} .chip.a .d{background:var(--amber)}
+  .chip.r{color:var(--red); border-color:rgba(255,91,91,.32); background:rgba(255,91,91,.08)} .chip.r .d{background:var(--red)}
+  .chip.b{color:var(--blue); border-color:rgba(122,162,255,.32); background:rgba(122,162,255,.08)} .chip.b .d{background:var(--blue)}
+
+  /* console-echo + terminal line */
+  .term{font-family:var(--mono); font-size:12px; line-height:2; color:#c6c9d2}
+  .term .t{color:#56565e}
+  .term .ok{color:var(--green)} .term .warn{color:var(--amber)} .term .err{color:#ff6b5e}
+  .urlchip{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:12.5px;
+    color:var(--accent); background:rgba(200,255,74,.07); border:1px solid rgba(200,255,74,.2);
+    padding:7px 12px; border-radius:8px}
 
   /* status demo */
-  .demo{background:var(--surface); border:1px solid var(--hair); border-radius:18px; padding:24px; display:flex; gap:26px; flex-wrap:wrap; align-items:center}
-  .demo .legend{display:flex; flex-direction:column; gap:12px; flex:1; min-width:230px}
-  .demo .legend .row{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--muted)}
-  .demo .legend .row b{color:var(--ink); font-weight:600}
-  .demo .legend .dot{width:12px; height:12px; border-radius:50%; flex:none}
-  .demo .legend .hint{margin-top:4px; font-size:12.5px; color:var(--faint)}
-  .demo .mini{flex:1.25; min-width:280px; background:#0d0e11; border:1px solid var(--hair); border-radius:14px; padding:14px}
-  .demo .mini .tile{display:flex; gap:10px; margin-bottom:10px}
-  .demo .mini .tile div{flex:1; background:var(--surface-2); border:1px solid var(--hair); border-radius:10px; padding:10px}
-  .demo .mini .tile small{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint)}
-  .demo .mini .tile b{font-family:"Space Grotesk",sans-serif; font-size:16px; font-weight:700; display:flex; align-items:center; gap:6px}
-  .demo .mini .bar{height:34px; border-radius:9px; display:grid; place-items:center; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:13px}
+  .demo{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  .stcard{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:16px 18px; display:flex; align-items:center; gap:13px}
+  .stcard .dot{width:12px; height:12px; border-radius:50%; flex:none}
+  .stcard b{font-family:var(--display); font-size:15px; display:block}
+  .stcard span{font-size:12.5px; color:var(--muted)}
+  .stled{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:16px 18px}
+  .stled .htile{display:flex; gap:10px; margin-bottom:10px}
+  .stled .htile div{flex:1; background:var(--surface-2); border:1px solid var(--hair); border-radius:10px; padding:10px}
+  .stled .htile small{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint)}
+  .stled .htile b{font-family:var(--display); font-size:16px; font-weight:600; display:flex; align-items:center; gap:6px}
+  .stled .bar{height:36px; border-radius:10px; display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:13px}
 
   /* download */
-  .download{display:grid; grid-template-columns:1.2fr .9fr; gap:22px; align-items:center;
-    background:linear-gradient(180deg,var(--surface),#0d0f12); border:1px solid var(--hair-2); border-radius:20px; padding:32px; margin-top:8px}
-  .download h3{font-family:"Space Grotesk",sans-serif; font-size:22px; font-weight:700; margin:0 0 6px}
-  .download p{margin:0 0 18px; color:var(--muted); font-size:14.5px; max-width:52ch}
-  .download .bigbtn{padding:18px 30px; font-size:16px}
-  .dlmeta{display:flex; flex-direction:column; gap:10px}
-  .dlmeta .row{display:flex; align-items:center; gap:11px; font-size:13px; color:var(--muted); background:var(--surface-2); border:1px solid var(--hair); border-radius:12px; padding:11px 14px}
-  .dlmeta .row b{color:var(--ink); font-weight:600}
-  .dlmeta .row .ic{width:30px; height:30px; border-radius:8px; background:var(--surface-3); display:grid; place-items:center; flex:none}
-  .note{margin-top:16px; font-size:12.5px; color:var(--faint)}
+  .download{background:linear-gradient(180deg,var(--surface), #0a0c0f); border:1px solid var(--hair-2); border-radius:22px; padding:36px; margin-top:10px; position:relative; overflow:hidden}
+  .download::before{content:""; position:absolute; top:-120px; right:-120px; width:340px; height:340px; border-radius:50%;
+    background:radial-gradient(circle, rgba(200,255,74,.14), transparent 70%); pointer-events:none}
+  .dlgrid{display:grid; grid-template-columns:1.15fr .85fr; gap:26px; align-items:center; position:relative}
+  .download h3{font-family:var(--serif); font-weight:400; font-size:26px; margin:0 0 8px}
+  .download p{margin:0 0 20px; color:var(--muted); font-size:14.5px; max-width:52ch}
+  .bigbtn{padding:17px 30px; font-size:16px}
+  .dlcards{display:flex; flex-direction:column; gap:11px}
+  .dlcard{display:flex; align-items:center; gap:13px; font-size:13.5px; color:var(--muted); background:var(--surface-2); border:1px solid var(--hair); border-radius:14px; padding:13px 15px; transition:border-color .2s}
+  .dlcard:hover{border-color:var(--hair-2)}
+  .dlcard .ic{width:34px; height:34px; border-radius:9px; background:var(--surface-3); display:grid; place-items:center; flex:none; font-size:16px}
+  .dlcard b{color:var(--ink); font-weight:600; display:block}
+  .dlcard .sz{font-size:11.5px; color:var(--faint); font-family:var(--mono)}
+  .dlcard .go{margin-left:auto; color:var(--accent); font-size:18px}
+  .note{margin-top:14px; font-size:12.5px; color:var(--faint)}
   .note a{color:var(--accent); text-decoration:none}
   .note a:hover{text-decoration:underline}
 
+  /* bottom CTA */
+  .closer{text-align:center; padding:70px 0 10px}
+  .closer h2{font-size:clamp(34px,5.6vw,52px)}
+  .closer .herobtns{justify-content:center; margin-top:26px}
+
   /* footer */
-  footer{border-top:1px solid var(--hair); margin-top:70px; padding-top:26px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; color:var(--faint); font-size:13px}
+  footer{border-top:1px solid var(--hair); margin-top:56px; padding-top:26px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; color:var(--faint); font-size:13px}
   footer .end{margin-left:auto}
   footer a{color:var(--muted); text-decoration:none}
   footer a:hover{color:var(--accent)}
 
-  @media (max-width:920px){ header.hero{grid-template-columns:1fr; gap:26px} .download{grid-template-columns:1fr} .feat{grid-template-columns:1fr 1fr} }
-  @media (max-width:720px){ .feat{grid-template-columns:1fr} nav{flex-wrap:wrap} .navlinks{margin-left:0} }
+  @media (max-width:960px){ .pillars{grid-template-columns:1fr 1fr} .bento{grid-template-columns:1fr} .demo{grid-template-columns:1fr} .dlgrid{grid-template-columns:1fr} }
+  @media (max-width:720px){ .pillars{grid-template-columns:1fr} .tile.wide{grid-column:auto} nav{flex-wrap:wrap} .navlinks{margin-left:0} .figcap{flex-wrap:wrap} }
 </style>
 
 <div class="bgfx"></div>
@@ -196,132 +258,135 @@
     </div>
   </nav>
 
-  <!-- =============== HERO + APP REAL =============== -->
+  <!-- =============== HERO =============== -->
   <header class="hero">
-    <div>
-      <span class="kicker">GUI Manager untuk 9router</span>
+    <div class="reveal in">
+      <span class="chiptag"><span class="live"></span>GUI Manager untuk <b>9router</b></span>
       <h1>Kendalikan 9router lewat <em>satu tombol</em>.</h1>
-      <p class="sub">Nggak perlu buka terminal dan ngetik <code>npx 9router</code> lagi. Sekali klik, proxy API lokal-mu langsung jalan — dengan status, log, dan kontrol yang jelas.</p>
+      <p class="sub">Tanpa buka terminal, tanpa ngetik <code>npx 9router</code>. Sekali klik, proxy AI lokal-mu langsung jalan — dengan status jujur, live console, dan kontrol penuh.</p>
       <div class="herobtns">
         <a class="btn primary" href="./9Router_Setup.exe" download>⬇ Unduh untuk Windows <span class="meta">· 54,8 MB</span></a>
-        <a class="btn ghost" href="#app">Coba tampilan <span class="meta">→</span></a>
+        <a class="btn ghost" href="#app">Lihat aplikasinya</a>
       </div>
       <div class="herometa">
-        <span><b class="ok">✓</b> Windows 10/11 (64-bit)</span>
+        <span><b class="ok">✓</b> Windows 10/11 64-bit</span>
         <span><b class="ok">✓</b> Node.js dibundel</span>
         <span><b class="ok">✓</b> Tanpa admin</span>
       </div>
     </div>
 
-    <div class="scene">
+    <!-- real interactive app -->
+    <div class="scene reveal" id="app">
       <div class="halo"></div>
-      <div class="app" id="appDemo">
-        <div class="titlebar">
-          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
-          <span class="ttl">9Router Controller Pro</span>
-          <span class="tray">▾</span>
-        </div>
-        <div class="pad">
-          <div class="head">
-            <div class="statusline"><span class="dot" id="stDot"></span><span id="stLabel">STOPPED</span></div>
-            <div class="meta">
-              <span><span id="up">Uptime 00:00:00</span></span>
-              <span><span id="ram">RAM —</span></span>
+      <div class="float">
+        <div class="app" id="appDemo">
+          <div class="titlebar">
+            <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+            <span class="ttl">9Router Controller Pro</span>
+            <span class="livebadge" id="liveBadge">●</span>
+          </div>
+          <div class="pad">
+            <div class="head">
+              <div class="statusline"><span class="dot" id="stDot"></span><span id="stLabel">STOPPED</span></div>
+              <div class="meta"><span><span id="up">Uptime 00:00:00</span></span><span><span id="ram">RAM —</span></span></div>
+            </div>
+            <button class="toggle" id="btnToggle" onclick="docToggle()">START 9ROUTER</button>
+            <div class="actions">
+              <button onclick="docAction('copy')">📋 Copy API URL</button>
+              <button onclick="docAction('restart')">🔄 Restart</button>
+              <button onclick="docAction('doctor')">🩺 Port Doctor</button>
+            </div>
+            <div class="console">
+              <div class="chead">Live Console <button class="clear" onclick="docClear()">Clear</button></div>
+              <div class="clog" id="clog"></div>
             </div>
           </div>
-          <button class="toggle" id="btnToggle" onclick="docToggle()">START 9ROUTER</button>
-          <div class="actions">
-            <button onclick="docAction('copy')">📋 Copy API URL</button>
-            <button onclick="docAction('restart')">🔄 Restart</button>
-            <button onclick="docAction('doctor')">🩺 Port Doctor</button>
+          <div class="checks">
+            <label><input type="checkbox" checked disabled> Run on Windows Startup</label>
+            <label><input type="checkbox" checked disabled> Auto-restart on crash</label>
           </div>
-          <div class="console">
-            <div class="chead">Live Console <button class="clear" onclick="docClear()">Clear</button></div>
-            <div class="clog" id="clog"></div>
-          </div>
-        </div>
-        <div class="checks">
-          <label><input type="checkbox" checked disabled> Run on Windows Startup</label>
-          <label><input type="checkbox" checked disabled> Auto-restart on crash</label>
         </div>
       </div>
+      <div class="figcap"><b>Fig 0.1</b><span class="sep"></span> tampilan aplikasi asli — bisa dicoba (START/STOP, Restart, Port Doctor).</div>
     </div>
   </header>
 
-  <!-- =============== FITUR =============== -->
+  <!-- =============== PILLARS =============== -->
   <section class="block" id="fitur">
-    <div class="sec-eyebrow">Fitur</div>
-    <h2>Satu tombol, semua yang kamu butuh.</h2>
-    <p class="lead">Dibuat untuk satu pekerjaan: menghidupkan & mematikan 9router dengan nyaman — tanpa menghafal perintah.</p>
-
-    <div class="feat">
-      <div class="card">
-        <h3><span class="ic">⚡</span> Start / Stop sekali klik</h3>
-        <p>Menjalankan <code>npx 9router --tray</code> di background — tanpa jendela terminal, tanpa menu yang nunggu input.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🟢</span> Status hidup yang jujur</h3>
-        <p>Health check tiap 5 detik. Hijau = sehat, Amber = proses ada tapi tak merespons, Merah = mati.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">📊</span> Uptime & RAM</h3>
-        <p>Pantau berapa lama jalan dan konsumsi RAM seluruh proses 9router — diperbarui otomatis.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🖥️</span> Live Console</h3>
-        <p>stdout real-time dengan timestamp, ditampilkan di jendela app. Tombol Clear untuk membersihkan.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">📋</span> Copy API URL</h3>
-        <p>Salin <code>http://localhost:20128/v1</code> sekali klik. Port otomatis terdeteksi dari output 9router.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🔄</span> Restart cepat</h3>
-        <p>Stop lalu start lagi dengan satu tombol — pas untuk coba ulang setelah ubah konfigurasi.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🩺</span> Port Doctor</h3>
-        <p>Pindai & bunuh proses yang mengunci port — dengan <b>konfirmasi dulu</b> sebelum membunuh apa pun.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🛡️</span> Auto-restart on crash</h3>
-        <p>Kalau server tiba-tiba mati, app menghidupkannya lagi otomatis (maks 3× berturut-turut).</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🪟</span> System tray</h3>
-        <p>Tutup jendela → app lanjut di tray. Ikon berubah warna mengikuti status. Menu klik kanan lengkap.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🚀</span> Auto-start Windows</h3>
-        <p>Bisa langsung menyala saat boot (registry HKCU, per-user, tanpa admin).</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">📦</span> Node.js dibundel</h3>
-        <p>Installer lengkap membawa Node portable — pengguna tak perlu install Node sendiri.</p>
-      </div>
-      <div class="card">
-        <h3><span class="ic">🔐</span> Tanpa admin</h3>
-        <p>Terpasang per-user (HKCU), tidak butuh izin administrator, tidak menyentuh system folder.</p>
-      </div>
+    <div class="sec-eyebrow reveal">Fitur inti</div>
+    <h2 class="reveal">Bukan sekadar tombol <em>on/off</em>.</h2>
+    <div class="pillars">
+      <div class="pillar reveal"><div class="ic">⚡</div><div class="tag">Sekali klik</div><h3>Start & Stop</h3><p>Menjalankan <code style="font-size:11px">npx 9router --tray</code> di background — tanpa jendela terminal.</p></div>
+      <div class="pillar reveal"><div class="ic">🟢</div><div class="tag">Jujur</div><h3>Status hidup</h3><p>Health check tiap 5 detik: RUNNING, DEGRADED, EXTERNAL, atau STOPPED.</p></div>
+      <div class="pillar reveal"><div class="ic">🖥️</div><div class="tag">Real-time</div><h3>Live Console</h3><p>Semua stdout server mengalir ke jendela app dengan timestamp — plus tombol Clear.</p></div>
+      <div class="pillar reveal"><div class="ic">🪟</div><div class="tag">Selalu siap</div><h3>Tray + Auto-start</h3><p>Menghilang ke system tray, dan bisa menyala sendiri saat Windows boot (tanpa admin).</p></div>
     </div>
   </section>
 
-  <!-- =============== STATUS DEMO =============== -->
-  <section class="block" id="status">
-    <div class="sec-eyebrow">Status</div>
-    <h2>Status yang bisa kau percaya.</h2>
-    <p class="lead">Bukan cuma "proses ada atau tidak" — app mengecek apakah API benar-benar merespons.</p>
-    <div class="demo">
-      <div class="legend">
-        <div class="row"><span class="dot" style="background:var(--green-soft)"></span> <b>RUNNING</b> — sehat, API merespons</div>
-        <div class="row"><span class="dot" style="background:var(--amber)"></span> <b>DEGRADED</b> — proses ada tapi tak merespons</div>
-        <div class="row"><span class="dot" style="background:var(--amber)"></span> <b>EXTERNAL</b> — port aktif, bukan app yang menjalankan</div>
-        <div class="row"><span class="dot" style="background:var(--red)"></span> <b>STOPPED</b> — mati</div>
-        <div class="hint">Coba tombol START/STOP di jendela aplikasi di atas — status & log bergerak real-time.</div>
+  <!-- =============== BENTO =============== -->
+  <section class="block">
+    <div class="sec-eyebrow reveal">Fitur lengkap</div>
+    <h2 class="reveal">Dirawat sampai ke <em>detail kecil</em>.</h2>
+    <div class="bento">
+
+      <div class="tile reveal">
+        <div class="eyeb">Kontrol</div>
+        <h3>Copy API URL</h3>
+        <p>Port terdeteksi otomatis dari banner 9router — bukan angka mati. Salin dengan satu klik.</p>
+        <div class="viz"><span class="urlchip">📋 http://localhost:20128/v1</span> <span style="color:var(--green);font-size:12px">→ disalin</span></div>
       </div>
-      <div class="mini">
-        <div class="tile">
-          <div><small>Status</small><b><span class="dot" style="background:var(--green-soft)"></span>RUNNING</b></div>
+
+      <div class="tile reveal">
+        <div class="eyeb">Recovery</div>
+        <h3>Auto-restart on crash</h3>
+        <p>Kalau server mati mendadak, app menghidupkannya lagi otomatis — maks 3× berturut-turut.</p>
+        <div class="viz"><div class="term"><span class="t">[12:01:03]</span> <span class="warn">⚠ Deteksi crash — server berhenti</span><br><span class="t">[12:01:05]</span> <span class="ok">↻ Auto-restart (1/3)…</span><br><span class="t">[12:01:07]</span> <span class="ok">✓ Server aktif kembali</span></div></div>
+      </div>
+
+      <div class="tile reveal">
+        <div class="eyeb">Pemindai</div>
+        <h3>Port Doctor</h3>
+        <p>Pindai & bunuh proses yang mengunci port — tetapi <b>selalu konfirmasi dulu</b>, tak pernah membunuh diam-diam.</p>
+        <div class="viz"><div class="term"><span class="t">[12:04:21]</span> <span class="ok">🩺 Scanning port 20128…</span><br><span class="t">[12:04:23]</span> <span class="warn">PID 8304 (node.exe) memegang port</span><br><span class="t">[12:04:24]</span> <span class="ok">✓ Killed PID 8304</span></div></div>
+      </div>
+
+      <div class="tile reveal">
+        <div class="eyeb">Transparansi</div>
+        <h3>Uptime & RAM</h3>
+        <p>Pantau berapa lama server jalan dan konsumsi RAM seluruh proses 9router (bukan hanya wrapper).</p>
+        <div class="viz"><div class="term"><span class="t">Uptime</span> &nbsp;01:23:45<br><span class="t">RAM</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;86 MB</div></div>
+      </div>
+
+      <div class="tile wide reveal">
+        <div class="eyeb">Keamanan</div>
+        <h3>Dirancang tidak merusak</h3>
+        <p>App hanya mengelola proses yang ia sendiri lahirkan — tidak pernah membunuh server 9router punyamu dari terminal, dan menolak mengambil alih port yang sudah dipakai layanan lain. Single-instance guard mencegah dua app jalan bersamaan.</p>
+        <div class="viz" style="display:flex; gap:10px; flex-wrap:wrap">
+          <span class="chip b"><span class="d"></span> Single-instance</span>
+          <span class="chip g"><span class="d"></span> Hanya PID milik sendiri</span>
+          <span class="chip a"><span class="d"></span> Tolak port sibuk</span>
+          <span class="chip r"><span class="d"></span> Port Doctor: konfirmasi dulu</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =============== STATUS =============== -->
+  <section class="block" id="status">
+    <div class="sec-eyebrow reveal">Status</div>
+    <h2 class="reveal">Empat status, <em>semua jujur</em>.</h2>
+    <p class="lead reveal">Bukan cuma "proses ada atau tidak" — app benar-benar mengecek apakah API merespons.</p>
+    <div class="demo">
+      <div style="display:flex; flex-direction:column; gap:12px">
+        <div class="stcard reveal"><span class="dot" style="background:var(--green)"></span><div><b>RUNNING</b><span>sehat — API merespons</span></div></div>
+        <div class="stcard reveal"><span class="dot" style="background:var(--amber)"></span><div><b>DEGRADED</b><span>proses ada, tak merespons</span></div></div>
+        <div class="stcard reveal"><span class="dot" style="background:var(--blue)"></span><div><b>EXTERNAL</b><span>port aktif, bukan app ini</span></div></div>
+        <div class="stcard reveal"><span class="dot" style="background:var(--red)"></span><div><b>STOPPED</b><span>mati</span></div></div>
+      </div>
+      <div class="stled reveal">
+        <div class="htile">
+          <div><small>Status</small><b><span class="dot" style="background:var(--green)"></span>RUNNING</b></div>
           <div><small>Uptime</small><b>01:23:45</b></div>
           <div><small>RAM</small><b>86 MB</b></div>
         </div>
@@ -332,135 +397,124 @@
 
   <!-- =============== DOWNLOAD =============== -->
   <section class="block" id="download">
-    <div class="sec-eyebrow">Unduh</div>
-    <h2>Pasang dalam satu langkah.</h2>
-    <div class="download">
-      <div>
-        <h3>Siap jalan di Windows-mu.</h3>
-        <p>Unduh installer lengkap — Node.js sudah dibundel, tanpa admin, langsung START. Atau pakai versi portable jika sudah punya Node.</p>
-        <a class="btn primary bigbtn" href="./9Router_Setup.exe" download>⬇ Unduh 9Router_Setup.exe</a>
-        <p class="note">Alternatif: ambil dari <a href="https://github.com/Maxodus126/9router-controller/releases" target="_blank">GitHub Releases</a>.</p>
-      </div>
-      <div class="dlmeta">
-        <div class="row"><span class="ic">📦</span> <span><b>54,8 MB</b> · installer lengkap<br><span style="font-size:11.5px;color:var(--faint)">Node.js dibundel</span></span></div>
-        <div class="row"><span class="ic">🎯</span> <span><b>Windows</b> 10/11 64-bit</span></div>
-        <div class="row"><span class="ic">🖥️</span> <span><b>Portable</b> 9RouterControllerPro.exe<br><span style="font-size:11.5px;color:var(--faint)">perlu Node system</span></span></div>
+    <div class="sec-eyebrow reveal">Unduh</div>
+    <h2 class="reveal">Pasang dalam <em>satu langkah</em>.</h2>
+    <div class="download reveal">
+      <div class="dlgrid">
+        <div>
+          <h3>Jalan di Windows-mu.</h3>
+          <p>Installer lengkap membawa Node.js portable — tanpa admin, tanpa install Node sendiri, langsung START. Atau pilih portable jika sudah punya Node.</p>
+          <a class="btn primary bigbtn" href="./9Router_Setup.exe" download>⬇ Unduh 9Router_Setup.exe</a>
+          <p class="note">Alternatif: <a href="https://github.com/Maxodus126/9router-controller/releases" target="_blank">GitHub Releases</a> · <a href="https://github.com/Maxodus126/9router-controller" target="_blank">sumber kode</a>.</p>
+        </div>
+        <div class="dlcards">
+          <a class="dlcard" href="./9Router_Setup.exe" download><span class="ic">📦</span><span><b>9Router_Setup.exe</b><span class="sz">installer lengkap · 54,8 MB</span></span><span class="go">→</span></a>
+          <a class="dlcard" href="./9RouterControllerPro.exe" download><span class="ic">🖥️</span><span><b>9RouterControllerPro.exe</b><span class="sz">portable · 32 MB · perlu Node</span></span><span class="go">→</span></a>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- =============== DUKUNGAN =============== -->
-  <section class="block" id="dukungan">
-    <div class="sec-eyebrow">Dukungan</div>
-    <h2>Butuh bantuan?</h2>
-    <p class="lead">Tanya di GitHub Issues — laporkan bug atau minta fitur baru.</p>
-    <div class="herobtns" style="justify-content:flex-start">
-      <a class="btn ghost" href="https://github.com/Maxodus126/9router-controller" target="_blank">GitHub</a>
+  <!-- =============== CLOSER =============== -->
+  <div class="closer reveal">
+    <h2>Stop <em>mengetik</em>. Klik saja.</h2>
+    <div class="herobtns">
+      <a class="btn primary" href="./9Router_Setup.exe" download>⬇ Unduh untuk Windows</a>
       <a class="btn ghost" href="https://github.com/Maxodus126/9router-controller/issues" target="_blank">Laporkan masalah</a>
     </div>
-  </section>
+  </div>
 
   <!-- =============== FOOTER =============== -->
-  <footer>
+  <footer class="reveal">
     <span>9Router Controller Pro v1.0</span>
-    <span class="end">Dibuat untuk pengguna 9router · <a href="#download">Unduh</a></span>
+    <span class="end">Dibuat untuk pengguna 9router · <a href="https://github.com/Maxodus126/9router-controller" target="_blank">GitHub</a> · <a href="#download">Unduh</a></span>
   </footer>
 
 </div>
 
 <script>
-/* ===== interactive real-app replica (matches app.py behavior) ===== */
+/* ===== scroll reveal ===== */
 (function(){
-  var stLabel=document.getElementById('stLabel');
-  var stDot=document.getElementById('stDot');
-  var btn=document.getElementById('btnToggle');
-  var clog=document.getElementById('clog');
-  var upEl=document.getElementById('up');
-  var ramEl=document.getElementById('ram');
-  var state='stopped';           // stopped | starting | running | degraded
-  var t0=0, upInt=null, ram=0;
+  var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }); },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+})();
+
+/* ===== interactive real-app replica (matches app.py) ===== */
+(function(){
+  var stLabel=document.getElementById('stLabel'), stDot=document.getElementById('stDot');
+  var btn=document.getElementById('btnToggle'), clog=document.getElementById('clog');
+  var upEl=document.getElementById('up'), ramEl=document.getElementById('ram');
+  var liveBadge=document.getElementById('liveBadge');
+  var state='stopped'; var t0=0, upInt=null;
 
   function stamp(){ var d=new Date(); function p(n){return (n<10?'0':'')+n} return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
   function log(text,cls){
     var ln=document.createElement('div'); ln.className='ln';
-    ln.innerHTML='<span class="t">['+stamp()+']</span> '+text;
-    if(cls) ln.querySelector('span').insertAdjacentHTML('afterend',' ');
-    if(cls) ln.innerHTML='<span class="t">['+stamp()+']</span> <span class="'+cls+'">'+text+'</span>';
+    ln.innerHTML='<span class="t">['+stamp()+']</span> <span class="'+cls+'">'+text+'</span>';
     clog.insertBefore(ln, clog.firstChild);
     while(clog.children.length>7) clog.removeChild(clog.lastChild);
   }
-  function setStatus(kind,label){
-    var colors={stopped:['#ff5b5b','rgba(255,91,91,.5)'],running:['#4caf50','rgba(76,175,80,.5)'],degraded:['#f5b64b','rgba(245,182,75,.5)']};
-    stLabel.textContent=label;
-    stDot.style.background=colors[kind][0];
+  var setStatus=function(kind,label){
+    var colors={stopped:['#ff5b5b','rgba(255,91,91,.5)'],running:['#3ddc7e','rgba(61,220,126,.5)'],degraded:['#f5b64b','rgba(245,182,75,.5)']};
+    stLabel.textContent=label; stDot.style.background=colors[kind][0];
     stDot.style.animation='none'; void stDot.offsetWidth;
-    stDot.style.animation='pulse 2.2s infinite';
-    stDot.style.boxShadow='0 0 0 0 '+colors[kind][1];
-  }
-  function fmt(s){ var h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60; function p(n){return (n<10?'0':'')+n} return p(h)+':'+p(m)+':'+p(sec); }
-  function startUp(){
-    t0=Date.now(); clearInterval(upInt);
-    upInt=setInterval(function(){ upEl.textContent='Uptime '+fmt(Math.floor((Date.now()-t0)/1000)); },1000);
-    upEl.textContent='Uptime '+fmt(0);
-    ram=Math.round(70+Math.random()*25); ramEl.textContent='RAM '+ram+' MB';
-  }
-  function stopUp(){ clearInterval(upInt); upEl.textContent='Uptime 00:00:00'; ramEl.textContent='RAM —'; }
+    stDot.style.animation='pulse 2.2s infinite'; stDot.style.boxShadow='0 0 0 0 '+colors[kind][1];
+    liveBadge.style.color=colors[kind][0];
+  };
+  var fmt=function(s){ var h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60; function p(n){return (n<10?'0':'')+n} return p(h)+':'+p(m)+':'+p(x); };
+  var startUp=function(){ t0=Date.now(); clearInterval(upInt); upInt=setInterval(function(){ upEl.textContent='Uptime '+fmt(Math.floor((Date.now()-t0)/1000)); },1000); upEl.textContent='Uptime '+fmt(0); ramEl.textContent='RAM '+Math.round(70+Math.random()*25)+' MB'; };
+  var stopUp=function(){ clearInterval(upInt); upEl.textContent='Uptime 00:00:00'; ramEl.textContent='RAM —'; };
 
-  // initial empty state
-  log('Welcome to 9Router Controller Pro. Press START 9ROUTER to begin.');
-  log('Tekan START untuk mencoba demo ini','info');
-
-  window.docToggle=function(){
-    if(state==='starting') return;
-    if(state==='running'){ // stop
-      state='stopped'; stopUp();
-      btn.textContent='START 9ROUTER'; btn.className='toggle';
-      setStatus('stopped','STOPPED');
-      log('✓ 9router stopped','ok');
-      return;
-    }
-    // start
-    state='starting';
-    btn.textContent='MEMULAI…'; btn.className='toggle busy';
-    setStatus('degraded','MEMULAI…');
+  function boot(){
+    log('Welcome to 9Router Controller Pro. Press START 9ROUTER to begin.');
+    setTimeout(function(){ bootStart(); }, 900);
+  }
+  function bootStart(){
+    state='starting'; btn.textContent='MEMULAI…'; btn.className='toggle busy'; setStatus('degraded','MEMULAI…');
     log('Starting: npx --yes 9router --tray --skip-update');
     setTimeout(function(){
       state='running'; startUp();
-      btn.textContent='STOP 9ROUTER'; btn.className='toggle off';
-      setStatus('running','RUNNING');
-      log('✓ Server aktif (PID '+(4800+Math.floor(Math.random()*99))+') pada port 20128.','ok');
+      btn.textContent='STOP 9ROUTER'; btn.className='toggle off'; setStatus('running','RUNNING');
+      log('✓ Server aktif (PID '+Math.floor(4800+Math.random()*99)+') pada port 20128.','ok');
       log('● listening on port 20128','info');
-      setTimeout(function(){ log('✓ health OK — API merespons','ok'); },600);
+      setTimeout(function(){ log('✓ health OK — API merespons','ok'); },650);
+    },1100);
+  }
+
+  window.docToggle=function(){
+    if(state==='starting') return;
+    if(state==='running'){
+      state='stopped'; stopUp(); btn.textContent='START 9ROUTER'; btn.className='toggle'; setStatus('stopped','STOPPED');
+      log('✓ 9router stopped','ok'); return;
+    }
+    state='starting'; btn.textContent='MEMULAI…'; btn.className='toggle busy'; setStatus('degraded','MEMULAI…');
+    log('Starting: npx --yes 9router --tray --skip-update');
+    setTimeout(function(){
+      state='running'; startUp(); btn.textContent='STOP 9ROUTER'; btn.className='toggle off'; setStatus('running','RUNNING');
+      log('✓ Server aktif (PID '+Math.floor(4800+Math.random()*99)+') pada port 20128.','ok');
+      log('● listening on port 20128','info');
+      setTimeout(function(){ log('✓ health OK — API merespons','ok'); },650);
     },1100);
   };
   window.docAction=function(kind){
-    if(kind==='copy'){
-      log('✓ Copied to clipboard: http://localhost:20128/v1','ok');
-    } else if(kind==='restart'){
+    if(kind==='copy'){ log('✓ Copied to clipboard: http://localhost:20128/v1','ok'); }
+    else if(kind==='restart'){
       if(state!=='running'){ log('Restart: server belum berjalan','warn'); return; }
-      log('Restarting…','warn');
-      state='stopped'; stopUp();
-      btn.textContent='START 9ROUTER'; btn.className='toggle';
-      setStatus('stopped','STOPPED');
-      log('✓ 9router stopped','ok');
+      log('Restarting…','warn'); state='stopped'; stopUp(); btn.textContent='START 9ROUTER'; btn.className='toggle'; setStatus('stopped','STOPPED'); log('✓ 9router stopped','ok');
       setTimeout(function(){
-        state='starting';
-        btn.textContent='MEMULAI…'; btn.className='toggle busy';
-        setStatus('degraded','MEMULAI…');
-        log('Starting: npx --yes 9router --tray --skip-update');
+        state='starting'; btn.textContent='MEMULAI…'; btn.className='toggle busy'; setStatus('degraded','MEMULAI…'); log('Starting: npx --yes 9router --tray --skip-update');
         setTimeout(function(){
-          state='running'; startUp();
-          btn.textContent='STOP 9ROUTER'; btn.className='toggle off';
-          setStatus('running','RUNNING');
-          log('✓ Server aktif (PID '+(4800+Math.floor(Math.random()*99))+') pada port 20128.','ok');
-          setTimeout(function(){ log('✓ health OK — API merespons','ok'); },600);
+          state='running'; startUp(); btn.textContent='STOP 9ROUTER'; btn.className='toggle off'; setStatus('running','RUNNING');
+          log('✓ Server aktif (PID '+Math.floor(4800+Math.random()*99)+') pada port 20128.','ok');
+          setTimeout(function(){ log('✓ health OK — API merespons','ok'); },650);
         },1100);
       },700);
     } else {
       log('🩺 Scanning port 20128…','warn');
-      setTimeout(function(){ log('🩺 Port 20128 bebas.','ok'); },500);
+      setTimeout(function(){ log('🩺 Port 20128 bebas.','ok'); },550);
     }
   };
   window.docClear=function(){ clog.innerHTML=''; };
+  boot();
 })();
 </script>
