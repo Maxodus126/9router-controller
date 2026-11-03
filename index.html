@@ -50,7 +50,7 @@
   /* ---------- reveal / motion ---------- */
   .reveal{opacity:0; transform:translateY(22px); transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
   .reveal.in{opacity:1; transform:none}
-  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1; transform:none; transition:none} .float{animation:none!important} .halo{animation:none!important} }
+  @media (prefers-reduced-motion:reduce){ .reveal,.wd{opacity:1; transform:none; transition:none; animation:none!important} .float,.halo,.bgfx::before,.bgfx .orb2,.mq-track,.grad-top{animation:none!important} .clog::after{display:none} }
 
   /* ---------- nav ---------- */
   nav{display:flex; align-items:center; gap:20px; padding:18px 0 20px;
@@ -240,11 +240,50 @@
   footer a{color:var(--muted); text-decoration:none}
   footer a:hover{color:var(--accent)}
 
+  /* ---------- v3.5 motion layer ---------- */
+  .grad-top{position:fixed; top:0; left:0; height:3px; width:0%; z-index:40;
+    background:linear-gradient(90deg,var(--accent),#5fd0a0,#7aa2ff,var(--accent)); background-size:300% 100%;
+    animation:gradmove 5s linear infinite; border-radius:0 3px 3px 0}
+  @keyframes gradmove{to{background-position:300% 0}}
+  .cursor-spot{position:fixed; width:380px; height:380px; border-radius:50%; pointer-events:none; z-index:1;
+    left:-999px; top:-999px; transform:translate(-50%,-50%);
+    background:radial-gradient(circle, rgba(200,255,74,.075), transparent 62%)}
+  @media (hover:none){ .cursor-spot{display:none} }
+  .bgfx .orb2{position:absolute; width:420px; height:420px; border-radius:50%;
+    background:radial-gradient(circle, rgba(122,162,255,.12), transparent 65%);
+    bottom:-120px; left:-140px; filter:blur(26px); animation:orbFloat 13s ease-in-out infinite reverse}
+  .bgfx::before{content:""; position:absolute; width:540px; height:540px; border-radius:50%;
+    background:radial-gradient(circle, rgba(61,220,126,.13), transparent 65%);
+    top:-170px; right:-150px; filter:blur(30px); animation:orbFloat 11s ease-in-out infinite}
+  @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(26px,-22px) scale(1.07)}}
+  .btn{position:relative; overflow:hidden}
+  .btn::after{content:""; position:absolute; top:0; left:-130%; width:55%; height:100%;
+    background:linear-gradient(100deg, transparent, rgba(255,255,255,.38), transparent);
+    transform:skewX(-20deg); transition:left .65s ease}
+  .btn:hover::after{left:170%}
+  .wd{display:inline-block; opacity:0; transform:translateY(.5em);
+    animation:wdup .8s cubic-bezier(.2,.7,.2,1) forwards}
+  @keyframes wdup{to{opacity:1; transform:none}}
+  .marquee{margin:50px auto 0; max-width:720px; overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+  .mq-track{display:flex; gap:16px; width:max-content; animation:mq 30s linear infinite;
+    font-family:var(--mono); font-size:12.5px; color:var(--faint)}
+  .mq-track span{white-space:nowrap}
+  .mq-track .ok{color:var(--green)} .mq-track .warn{color:var(--amber)} .mq-track .info{color:#8ec9ff}
+  @keyframes mq{to{transform:translateX(-50%)}}
+  .scene{perspective:1200px}
+  .clog::after{content:""; display:inline-block; width:7px; height:13px; margin-left:3px; vertical-align:text-bottom;
+    background:var(--green); opacity:.9; animation:caret 1s steps(1) infinite}
+  @keyframes caret{50%{opacity:0}}
+
   @media (max-width:960px){ .pillars{grid-template-columns:1fr 1fr} .bento{grid-template-columns:1fr} .demo{grid-template-columns:1fr} .dlgrid{grid-template-columns:1fr} }
   @media (max-width:720px){ .pillars{grid-template-columns:1fr} .tile.wide{grid-column:auto} nav{flex-wrap:wrap} .navlinks{margin-left:0} .figcap{flex-wrap:wrap} }
 </style>
 
-<div class="bgfx"></div>
+<div class="bgfx"><span class="orb2"></span></div>
+<div class="grad-top" id="gradTop"></div>
+<div class="cursor-spot" id="cursorSpot"></div>
 <div class="wrap">
 
   <!-- =============== NAV =============== -->
@@ -310,6 +349,22 @@
       <div class="figcap"><b>Fig 0.1</b><span class="sep"></span> tampilan aplikasi asli — bisa dicoba (START/STOP, Restart, Port Doctor).</div>
     </div>
   </header>
+
+  <!-- =============== MARQUEE =============== -->
+  <div class="marquee reveal" aria-hidden="true">
+    <div class="mq-track">
+      <span>❯ <span class="ok">npx 9router --tray</span></span>
+      <span>● <span class="ok">listening on port 20128</span></span>
+      <span>→ GET /v1/models ⟶ <span class="ok">200</span> <span class="warn">8ms</span></span>
+      <span>→ POST /v1/chat/completions ⟶ <span class="ok">200</span> <span class="warn">412ms</span></span>
+      <span><span class="ok">✓ health OK — API merespons</span></span>
+      <span>❯ <span class="ok">npx 9router --tray</span></span>
+      <span>● <span class="ok">listening on port 20128</span></span>
+      <span>→ GET /v1/models ⟶ <span class="ok">200</span> <span class="warn">8ms</span></span>
+      <span>→ POST /v1/chat/completions ⟶ <span class="ok">200</span> <span class="warn">412ms</span></span>
+      <span><span class="ok">✓ health OK — API merespons</span></span>
+    </div>
+  </div>
 
   <!-- =============== PILLARS =============== -->
   <section class="block" id="fitur">
@@ -454,6 +509,16 @@
     clog.insertBefore(ln, clog.firstChild);
     while(clog.children.length>7) clog.removeChild(clog.lastChild);
   }
+  function typeLine(text,cls,speed){
+    var ln=document.createElement('div'); ln.className='ln';
+    ln.innerHTML='<span class="t">['+stamp()+']</span> <span class="'+cls+'"></span>';
+    clog.insertBefore(ln, clog.firstChild); while(clog.children.length>7) clog.removeChild(clog.lastChild);
+    var span=ln.querySelector('span:last-child'), i=0, done=false;
+    return new Promise(function(res){
+      function tick(){ if(done) return; if(i<=text.length){ span.textContent=text.slice(0,i); i++; setTimeout(tick,speed||16); } else res(); }
+      tick();
+    });
+  }
   var setStatus=function(kind,label){
     var colors={stopped:['#ff5b5b','rgba(255,91,91,.5)'],running:['#3ddc7e','rgba(61,220,126,.5)'],degraded:['#f5b64b','rgba(245,182,75,.5)']};
     stLabel.textContent=label; stDot.style.background=colors[kind][0];
@@ -465,9 +530,11 @@
   var startUp=function(){ t0=Date.now(); clearInterval(upInt); upInt=setInterval(function(){ upEl.textContent='Uptime '+fmt(Math.floor((Date.now()-t0)/1000)); },1000); upEl.textContent='Uptime '+fmt(0); ramEl.textContent='RAM '+Math.round(70+Math.random()*25)+' MB'; };
   var stopUp=function(){ clearInterval(upInt); upEl.textContent='Uptime 00:00:00'; ramEl.textContent='RAM —'; };
 
-  function boot(){
-    log('Welcome to 9Router Controller Pro. Press START 9ROUTER to begin.');
-    setTimeout(function(){ bootStart(); }, 900);
+  async function boot(){
+    await typeLine('Welcome to 9Router Controller Pro. Press START 9ROUTER to begin.');
+    await new Promise(r=>setTimeout(r,450));
+    await typeLine('Auto-demo: menyalakan server…','info',12);
+    bootStart();
   }
   function bootStart(){
     state='starting'; btn.textContent='MEMULAI…'; btn.className='toggle busy'; setStatus('degraded','MEMULAI…');
@@ -516,5 +583,40 @@
   };
   window.docClear=function(){ clog.innerHTML=''; };
   boot();
+})();
+
+/* ===== v3.5: title stagger, scroll progress, cursor glow, tilt ===== */
+(function(){
+  // headline word stagger
+  var h1=document.querySelector('h1');
+  if(h1){
+    var words=[];
+    h1.childNodes.forEach(function(n){
+      if(n.nodeType===3){ n.textContent.split(/(\s+)/).forEach(function(t){ if(t) words.push({t:t}); }); }
+      else if(n.nodeName==='EM'){ n.innerHTML.split(/(\s+)/).forEach(function(t){ if(t) words.push({t:t,em:true}); }); }
+    });
+    h1.innerHTML='';
+    words.forEach(function(p,i){
+      var s=document.createElement('span'); s.className='wd'; s.textContent=p.t;
+      s.style.animationDelay=(0.12+i*0.045)+'s';
+      if(p.em){ var e=document.createElement('em'); e.appendChild(s); h1.appendChild(e); } else h1.appendChild(s);
+    });
+  }
+  // scroll progress
+  var bar=document.getElementById('gradTop');
+  function upd(){ var m=document.documentElement.scrollHeight-innerHeight; bar.style.width=(m>0? scrollY/m*100:0)+'%'; }
+  addEventListener('scroll',upd,{passive:true}); upd();
+  // cursor glow
+  var spot=document.getElementById('cursorSpot');
+  addEventListener('mousemove',function(e){ spot.style.left=e.clientX+'px'; spot.style.top=e.clientY+'px'; },{passive:true});
+  // 3D tilt on app window
+  var demo=document.getElementById('appDemo'), scene=demo? demo.closest('.scene') : null;
+  if(demo && scene){
+    scene.addEventListener('mousemove',function(e){
+      var r=scene.getBoundingClientRect(), x=(e.clientX-r.left)/r.width-.5, y=(e.clientY-r.top)/r.height-.5;
+      demo.style.transform='rotateX('+(-y*3.5)+'deg) rotateY('+(x*5)+'deg)';
+    });
+    scene.addEventListener('mouseleave',function(){ demo.style.transform='rotateX(2deg)'; });
+  }
 })();
 </script>
