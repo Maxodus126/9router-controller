@@ -277,7 +277,27 @@
     background:var(--green); opacity:.9; animation:caret 1s steps(1) infinite}
   @keyframes caret{50%{opacity:0}}
 
+  /* ---------- version picker ---------- */
+  .cmp{margin-top:26px; background:var(--surface); border:1px solid var(--hair); border-radius:22px; padding:28px}
+  .cmp-head{font-family:var(--serif); font-weight:400; font-size:26px; margin:0}
+  .cmp-head em{font-style:italic; color:var(--accent)}
+  .cmp-lead{color:var(--muted); font-size:14.5px; margin:8px 0 0; max-width:58ch}
+  .cmp-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:22px}
+  .cmp-card{background:var(--bg-2); border:1px solid var(--hair); border-radius:18px; padding:24px 22px 22px; position:relative}
+  .cmp-card.rec{border-color:rgba(200,255,74,.35); background:linear-gradient(180deg, rgba(200,255,74,.05), transparent 42%), var(--bg-2)}
+  .cmp-tag{position:absolute; top:-12px; left:20px; font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:5px 13px; border-radius:999px; background:var(--accent); color:#0a0b0d}
+  .cmp-tag.neutral{background:var(--surface-3); color:var(--muted)}
+  .cmp-ic{font-size:24px}
+  .cmp-card h4{font-family:var(--display); margin:10px 0 3px; font-size:18px; font-weight:600}
+  .cmp-sub{margin:0 0 16px; color:var(--faint); font-size:12px; letter-spacing:.05em; text-transform:uppercase; font-weight:600}
+  .cmp-card ul{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; font-size:13.5px; color:var(--muted)}
+  .cmp-card li{padding-left:21px; position:relative}
+  .cmp-card li::before{content:"✓"; position:absolute; left:0; color:var(--green); font-weight:700}
+  .cmp-card li b{color:var(--ink)}
+  .cmp-card .btn{margin-top:20px; width:100%; justify-content:center}
+
   @media (max-width:960px){ .pillars{grid-template-columns:1fr 1fr} .bento{grid-template-columns:1fr} .demo{grid-template-columns:1fr} .dlgrid{grid-template-columns:1fr} }
+  @media (max-width:720px){ .cmp-grid{grid-template-columns:1fr} }
   @media (max-width:720px){ .pillars{grid-template-columns:1fr} .tile.wide{grid-column:auto} nav{flex-wrap:wrap} .navlinks{margin-left:0} .figcap{flex-wrap:wrap} }
 </style>
 
@@ -465,6 +485,40 @@
         <div class="dlcards">
           <a class="dlcard" href="./9Router_Setup.exe" download><span class="ic">📦</span><span><b>9Router_Setup.exe</b><span class="sz">installer lengkap · 54,8 MB</span></span><span class="go">→</span></a>
           <a class="dlcard" href="./9RouterControllerPro.exe" download><span class="ic">🖥️</span><span><b>9RouterControllerPro.exe</b><span class="sz">portable · 32 MB · perlu Node</span></span><span class="go">→</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- version picker -->
+    <div class="cmp reveal">
+      <h3 class="cmp-head">Dua versi — <em>pilih yang pas</em>.</h3>
+      <p class="cmp-lead">Keduanya app yang sama; bedanya hanya cara membawa Node.js. Ini panduan singkatnya.</p>
+      <div class="cmp-grid">
+        <div class="cmp-card rec">
+          <div class="cmp-tag">Direkomendasikan</div>
+          <div class="cmp-ic">📦</div>
+          <h4>9Router_Setup.exe</h4>
+          <p class="cmp-sub">Installer lengkap · 54,8 MB</p>
+          <ul>
+            <li>Node.js <b>dibundel</b> — tak perlu install Node</li>
+            <li>Pasang per-user, <b>tanpa admin</b>, ada shortcut</li>
+            <li>Paling konsisten — npx pasti ketemu</li>
+            <li>Cocok untuk <b>sebagian besar orang</b></li>
+          </ul>
+          <a class="btn primary" href="./9Router_Setup.exe" download>⬇ Unduh installer</a>
+        </div>
+        <div class="cmp-card">
+          <div class="cmp-tag neutral">Alternatif</div>
+          <div class="cmp-ic">🖥️</div>
+          <h4>9RouterControllerPro.exe</h4>
+          <p class="cmp-sub">Portable · 32 MB</p>
+          <ul>
+            <li>Butuh <b>Node.js</b> sudah terpasang</li>
+            <li>Langsung jalan — <b>tanpa instalasi</b></li>
+            <li>Lebih ringan, tidak menyentuh sistem</li>
+            <li>Cocok untuk <b>developer / pengguna Node</b></li>
+          </ul>
+          <a class="btn ghost" href="./9RouterControllerPro.exe" download>Unduh portable →</a>
         </div>
       </div>
     </div>
