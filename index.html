@@ -304,6 +304,52 @@
   @media (max-width:960px){ .pillars{grid-template-columns:1fr 1fr} .bento{grid-template-columns:1fr} .demo{grid-template-columns:1fr} .dlgrid{grid-template-columns:1fr} }
   @media (max-width:720px){ .cmp-grid{grid-template-columns:1fr} }
   @media (max-width:720px){ .pillars{grid-template-columns:1fr} .tile.wide{grid-column:auto} nav{flex-wrap:wrap} .navlinks{margin-left:0} .figcap{flex-wrap:wrap} }
+
+  /* ---------- mobile polish ---------- */
+  html,body{max-width:100%; overflow-x:hidden}
+  ::selection{background:rgba(200,255,74,.25)}
+  @media (hover:hover){
+    .btn:active{transform:scale(.97)}
+    .app .toggle:active{transform:scale(.985)}
+    .app .actions button:active{transform:scale(.96)}
+  }
+  @media (hover:none), (max-width:720px){
+    nav{backdrop-filter:none; -webkit-backdrop-filter:none; background:linear-gradient(180deg,rgba(5,6,8,.97), rgba(5,6,8,.9))}
+    .bgfx::before,.bgfx .orb2{filter:none}
+    .scene{perspective:none}
+    .float{animation:none}
+    .app{transform:none}
+  }
+  @media (max-width:480px){
+    nav{padding:14px 0 12px; gap:10px; flex-wrap:nowrap}
+    .logo{font-size:15px} .logo .mark{width:28px; height:28px; font-size:13px}
+    .navlinks a{padding:7px 10px; font-size:13px}
+    header.hero{padding:26px 0 40px}
+    .chiptag{font-size:11px; padding:6px 12px}
+    h1{font-size:clamp(38px,11vw,52px)}
+    .sub{font-size:16px; margin-bottom:26px}
+    .herobtns .btn{padding:13px 20px; font-size:14px}
+    .herometa{gap:14px; font-size:12.5px}
+    .scene{margin-top:40px}
+    .app .pad{padding:12px}
+    .app .head{padding:13px 14px 11px}
+    .app .statusline{font-size:17px}
+    .app .toggle{height:50px; font-size:15px}
+    .app .actions button{font-size:11.5px; height:36px}
+    .app .console{padding:11px}
+    .app .console .clog{min-height:120px; font-size:10.5px}
+    .figcap{font-size:11.5px; margin-top:18px}
+    .marquee{margin-top:38px}
+    section.block{padding:48px 0 4px}
+    .pillar{padding:18px 16px}
+    .tile{padding:20px 18px}
+    .cmp{padding:22px 18px; border-radius:18px}
+    .cmp-grid{gap:14px}
+    .cmp-card{padding:20px 16px}
+    .download{padding:24px 18px; border-radius:18px}
+    .dlcard{padding:11px 12px}
+    .bigbtn{padding:15px 22px; font-size:15px}
+  }
 </style>
 
 <div class="bgfx"><span class="orb2"></span></div>
