@@ -1,21 +1,24 @@
 <title>9Router Controller Pro</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-  /* ===== 9Router Controller Pro — product landing =====
-     Single-page, dark, dev-tool aesthetic (matches the app: near-black,
-     electric lime accent, semantic green/amber/red for status).
-     Layout: sticky nav → hero → features → interactive status demo →
-             download → footer.
-     Type: Space Grotesk (display) + Inter (body) + Consolas (mock UI).
+  /* ===== 9Router Controller Pro — product landing v2 =====
+     Premium dark dev-tool aesthetic. Accurate 1:1 interactive replica of the
+     actual CustomTkinter app (colors # pick from app.py: #141414 window,
+     #1b1b1f frames, #0e0e11 console, green #2e7d32, red #ff5b5b, amber #f5b64b).
+     Layout: split hero (copy + live app window) → features → status → download
+             → support → footer.
+     Type: Space Grotesk (display) + Inter (body) + JetBrains Mono (console).
   */
   :root{
-    --bg:#07080a; --surface:#101216; --surface-2:#171a20; --surface-3:#1e2229;
+    --bg:#07080a; --surface:#101216; --surface-2:#161920; --surface-3:#1d212a;
     --hair:rgba(255,255,255,.07); --hair-2:rgba(255,255,255,.14);
-    --ink:#e9e9ee; --muted:#9aa0a8; --faint:#6a7078;
-    --accent:#b6ff3f; --accent-deep:#84c41d;
-    --green:#42e08a; --amber:#ffc24d; --red:#ff5d5d;
-    --mono:Consolas,"Cascadia Mono",monospace;
+    --ink:#ededf0; --muted:#9ba1a9; --faint:#666d76;
+    --accent:#b6ff3f; --accent-deep:#8fd11f;
+    --green:#4caf50; --green-soft:#42e08a;
+    --amber:#f5b64b; --red:#ff5b5b;
+    --app-bg:#141414; --app-frame:#1b1b1f; --app-console:#0e0e11; --app-btn:#26262b;
+    --mono:"JetBrains Mono","Cascadia Mono",Consolas,monospace;
     color-scheme: dark;
   }
   *{box-sizing:border-box}
@@ -27,87 +30,147 @@
     padding-right:max(16px, env(safe-area-inset-right,0px));}
   .bgfx{position:fixed; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(720px 460px at 12% -6%, rgba(182,255,63,.08), transparent 65%),
-      radial-gradient(760px 500px at 90% 4%, rgba(66,224,138,.06), transparent 65%),
-      radial-gradient(1000px 700px at 50% 115%, rgba(124,147,255,.05), transparent 70%);}
-  .wrap{position:relative; z-index:1; max-width:1040px; margin:0 auto; padding-block:0 80px}
+      radial-gradient(880px 520px at 10% -8%, rgba(182,255,63,.10), transparent 62%),
+      radial-gradient(760px 500px at 92% 6%, rgba(66,224,138,.07), transparent 60%),
+      radial-gradient(1100px 760px at 50% 118%, rgba(124,147,255,.06), transparent 70%);}
+  .wrap{position:relative; z-index:1; max-width:1100px; margin:0 auto; padding-block:0 90px}
 
   /* ---------- nav ---------- */
-  nav{display:flex; align-items:center; gap:18px; padding:20px 0 26px;
-    position:sticky; top:0; z-index:20; background:linear-gradient(180deg,var(--bg) 70%, transparent);}
-  .logo{display:flex; align-items:center; gap:10px; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:17px}
-  .logo .mark{width:30px; height:30px; border-radius:9px; display:grid; place-items:center;
-    background:linear-gradient(135deg,var(--accent),#5fd0a0); color:#0a0b0d; font-size:15px}
+  nav{display:flex; align-items:center; gap:18px; padding:20px 0 24px;
+    position:sticky; top:0; z-index:20; background:linear-gradient(180deg,var(--bg) 74%, transparent);}
+  .logo{display:flex; align-items:center; gap:11px; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:17px; letter-spacing:.01em}
+  .logo .mark{width:32px; height:32px; border-radius:9px; display:grid; place-items:center;
+    background:linear-gradient(135deg,var(--accent),#5fd0a0); color:#0a0b0d; font-size:15px;
+    box-shadow:0 4px 16px -4px rgba(182,255,63,.5)}
+  .logo b{color:var(--accent)}
   .navlinks{display:flex; gap:6px; margin-left:auto; flex-wrap:wrap}
   .navlinks a{color:var(--muted); text-decoration:none; font-size:14px; font-weight:500; padding:7px 12px; border-radius:8px; transition:.15s}
   .navlinks a:hover{color:var(--ink); background:var(--surface-2)}
+  .navlinks .pill{color:var(--accent); border:1px solid rgba(182,255,63,.35); background:rgba(182,255,63,.06)}
 
-  /* ---------- hero ---------- */
-  header.hero{text-align:center; padding:26px 0 40px}
+  /* ---------- hero (split) ---------- */
+  header.hero{display:grid; grid-template-columns:1.05fr 1fr; gap:34px; align-items:center; padding:30px 0 56px}
   .kicker{display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:.14em;
     text-transform:uppercase; color:var(--muted); border:1px solid var(--hair-2);
     padding:7px 15px; border-radius:999px; background:rgba(255,255,255,.02)}
-  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green)}
-  h1{font-family:"Space Grotesk",sans-serif; font-size:clamp(32px,5.6vw,56px); font-weight:700;
-    letter-spacing:-.02em; line-height:1.05; margin:22px auto 14px; max-width:16ch}
-  h1 em{font-style:normal; color:var(--accent)}
-  .sub{color:var(--muted); max-width:52ch; margin:0 auto 30px; font-size:17px}
-  .sub code{font-family:var(--mono); font-size:.9em; color:var(--accent); background:var(--surface-2); padding:1px 7px; border-radius:6px}
-  .herobtns{display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+  .kicker::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--green-soft); box-shadow:0 0 10px var(--green-soft)}
+  h1{font-family:"Space Grotesk",sans-serif; font-size:clamp(34px,5.4vw,58px); font-weight:700;
+    letter-spacing:-.03em; line-height:1.02; margin:20px 0 12px}
+  h1 em{font-style:normal; background:linear-gradient(90deg,var(--accent),#5fd0a0); -webkit-background-clip:text; background-clip:text; color:transparent}
+  .sub{color:var(--muted); max-width:46ch; margin:0 0 30px; font-size:17px}
+  .sub code{font-family:var(--mono); font-size:.9em; color:var(--accent); background:var(--surface-2); padding:2px 8px; border-radius:6px}
+  .herobtns{display:flex; gap:12px; flex-wrap:wrap}
   .btn{display:inline-flex; align-items:center; gap:10px; padding:14px 24px; border-radius:12px;
     font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:15px; text-decoration:none; transition:.18s}
-  .btn.primary{background:var(--accent); color:#0a0b0d; box-shadow:0 10px 28px -10px rgba(182,255,63,.55)}
-  .btn.primary:hover{transform:translateY(-2px)}
+  .btn.primary{background:var(--accent); color:#0a0b0d; box-shadow:0 12px 32px -10px rgba(182,255,63,.55)}
+  .btn.primary:hover{transform:translateY(-2px); box-shadow:0 16px 40px -10px rgba(182,255,63,.6)}
   .btn.ghost{border:1px solid var(--hair-2); color:var(--ink); background:var(--surface)}
   .btn.ghost:hover{border-color:var(--accent); color:var(--accent)}
   .btn .meta{font-family:"Inter",sans-serif; font-weight:500; font-size:12.5px; opacity:.65}
-  .herometa{display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin-top:26px; color:var(--faint); font-size:13px}
+  .herometa{display:flex; gap:22px; flex-wrap:wrap; margin-top:26px; color:var(--faint); font-size:13px}
   .herometa b{color:var(--muted); font-weight:600}
+  .herometa .ok{color:var(--green-soft)}
+
+  /* ---------- app window replica (real UI) ---------- */
+  .scene{position:relative}
+  .scene .halo{position:absolute; inset:-60px -40px; z-index:0; pointer-events:none;
+    background:radial-gradient(340px 260px at 50% 20%, rgba(182,255,63,.12), transparent 70%)}
+  .app{position:relative; z-index:1; width:100%; max-width:440px; margin:0 auto;
+    background:var(--app-bg); border-radius:16px; border:1px solid var(--hair-2);
+    box-shadow:0 34px 80px -30px rgba(0,0,0,.9), 0 0 0 1px rgba(255,255,255,.03);
+    font-size:13px; overflow:hidden; color:#e8e8ec}
+  .app .titlebar{display:flex; align-items:center; gap:8px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.06);
+    background:rgba(255,255,255,.02)}
+  .app .titlebar .dot{width:11px; height:11px; border-radius:50%}
+  .app .titlebar .g{background:#28c840} .app .titlebar .y{background:#febc2e} .app .titlebar .r{background:#ff5f57}
+  .app .titlebar span.ttl{flex:1; text-align:center; font-size:12px; color:#b9b9c2; font-weight:500; letter-spacing:.02em}
+  .app .titlebar .tray{font-size:11px; color:#6a6a74}
+  .app .pad{padding:14px}
+  .app .head{background:var(--app-frame); border-radius:12px; padding:14px 16px 12px}
+  .app .statusline{font-size:18px; font-weight:700; letter-spacing:-.01em; display:flex; align-items:center; gap:8px}
+  .app .statusline .dot{width:10px; height:10px; border-radius:50%; background:var(--red); box-shadow:0 0 0 0 rgba(255,91,91,.5); animation:pulse 2.2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,91,91,.5)}70%{box-shadow:0 0 0 9px rgba(255,91,91,0)}100%{box-shadow:0 0 0 0 rgba(255,91,91,0)}}
+  .app .meta{display:flex; justify-content:space-between; margin-top:6px; font-size:12px; color:#9a9aa2; font-family:var(--mono)}
+  .app .toggle{margin-top:10px; height:54px; width:100%; border:0; border-radius:12px; cursor:pointer;
+    font-family:"Space Grotesk",sans-serif; font-size:16px; font-weight:700; letter-spacing:.02em;
+    background:var(--green); color:#fff; transition:background .18s}
+  .app .toggle:hover{background:#388e3c}
+  .app .toggle.off{background:#b3261e}
+  .app .toggle.off:hover{background:#c9302c}
+  .app .toggle.busy{background:#5a5a60; cursor:wait}
+  .app .actions{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-top:8px}
+  .app .actions button{height:38px; border:0; border-radius:10px; cursor:pointer; font-family:"Inter",sans-serif;
+    font-size:12px; font-weight:500; color:#d8d8e0; background:var(--app-btn); transition:background .15s}
+  .app .actions button:hover{background:#2f2f36}
+  .app .console{background:var(--app-frame); border-radius:12px; margin-top:8px; padding:12px; min-height:182px; display:flex; flex-direction:column}
+  .app .console .chead{display:flex; align-items:center; font-size:13px; font-weight:700; color:#c8c8d0; padding-bottom:8px}
+  .app .console .chead .clear{margin-left:auto; font-size:11px; color:#b9b9c2; background:var(--app-btn);
+    border:0; border-radius:8px; padding:4px 12px; cursor:pointer; font-family:"Inter",sans-serif}
+  .app .console .chead .clear:hover{background:#2f2f36}
+  .app .console .clog{flex:1; background:var(--app-console); border-radius:8px; padding:9px 11px;
+    font-family:var(--mono); font-size:11px; line-height:1.7; color:#d4d4d8; min-height:130px;
+    overflow:hidden}
+  .app .console .clog .ln{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  .app .console .clog .ln .t{color:#56565e}
+  .app .console .clog .ok{color:var(--green-soft)}
+  .app .console .clog .err{color:#ff6b5e}
+  .app .console .clog .warn{color:var(--amber)}
+  .app .console .clog .info{color:#8ec9ff}
+  .app .checks{padding:12px 16px 14px; display:flex; flex-direction:column; gap:7px; font-size:12px; color:#b9b9c2}
+  .app .checks label{display:flex; align-items:center; gap:9px; cursor:pointer}
+  .app .checks input{appearance:none; width:17px; height:17px; border-radius:6px; border:1px solid #3a3a42;
+    background:rgba(255,255,255,.03); cursor:pointer; position:relative}
+  .app .checks input:checked{background:var(--accent); border-color:var(--accent)}
+  .app .checks input:checked::after{content:""; position:absolute; left:5px; top:2px; width:4px; height:9px;
+    border:solid #0a0b0d; border-width:0 2px 2px 0; transform:rotate(45deg)}
+  .app .checks input:disabled{opacity:.45}
 
   /* ---------- sections ---------- */
-  section.block{padding:54px 0 8px; scroll-margin-top:70px}
-  .sec-eyebrow{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); font-weight:600}
-  h2{font-family:"Space Grotesk",sans-serif; font-size:clamp(24px,3.6vw,34px); font-weight:700; letter-spacing:-.015em; margin:8px 0 12px}
-  .lead{color:var(--muted); max-width:60ch; margin:0 0 34px; font-size:16px}
+  section.block{padding:58px 0 8px; scroll-margin-top:70px}
+  .sec-eyebrow{font-size:11.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--faint); font-weight:600; display:flex; align-items:center; gap:10px}
+  .sec-eyebrow::before{content:""; width:22px; height:1px; background:var(--accent-deep)}
+  h2{font-family:"Space Grotesk",sans-serif; font-size:clamp(25px,3.8vw,36px); font-weight:700; letter-spacing:-.02em; margin:8px 0 12px; text-wrap:balance}
+  .lead{color:var(--muted); max-width:62ch; margin:0 0 34px; font-size:16px}
 
-  /* feature list */
-  .feat{display:grid; grid-template-columns:1fr 1fr; gap:16px}
-  .feat .card{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:20px; transition:.2s}
-  .feat .card:hover{border-color:var(--hair-2); transform:translateY(-2px)}
-  .feat h3{margin:0 0 6px; font-size:17px; font-weight:600; font-family:"Space Grotesk",sans-serif; display:flex; align-items:center; gap:10px}
-  .feat h3 .ic{width:30px; height:30px; border-radius:9px; background:var(--surface-3); display:grid; place-items:center; font-size:15px}
-  .feat p{margin:0; font-size:14.5px; color:var(--muted)}
-  .feat code{font-family:var(--mono); font-size:12px; color:var(--accent); background:var(--surface-2); padding:1px 6px; border-radius:5px}
-
-  /* mock mini-app window */
-  .mock{background:linear-gradient(180deg,#14161a,#0e0f12); border:1px solid var(--hair-2); border-radius:14px; overflow:hidden; box-shadow:0 22px 50px -22px rgba(0,0,0,.8)}
-  .mock .bar{display:flex; align-items:center; gap:8px; padding:10px 13px; border-bottom:1px solid var(--hair); font-size:12px; color:var(--muted)}
-  .mock .bar .dot{width:11px; height:11px; border-radius:50%; display:inline-block}
-  .mock .bar .g{background:#28c840} .mock .bar .y{background:#febc2e} .mock .bar .r{background:#ff5f57}
-  .mock .body{padding:13px; display:flex; flex-direction:column; gap:10px}
-  .mock .tile{display:flex; gap:8px}
-  .mock .tile div{flex:1; background:var(--surface-2); border:1px solid var(--hair); border-radius:9px; padding:9px 10px}
-  .mock .tile small{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint)}
-  .mock .tile b{font-family:"Space Grotesk",sans-serif; font-size:16px; font-weight:700}
-  .mock .tile .dot{width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px}
-  .mock .big{height:44px; border-radius:10px; display:grid; place-items:center; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:14px}
-  .mock .log{background:#0a0b0e; border:1px solid var(--hair); border-radius:9px; padding:10px 12px; font-family:var(--mono); font-size:11px; line-height:1.6; color:#c6c9d2}
-  .mock .log span{color:var(--accent)}
+  /* feature card */
+  .feat{display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px}
+  .feat .card{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:20px; transition:.2s; position:relative; overflow:hidden}
+  .feat .card:hover{border-color:var(--hair-2); transform:translateY(-3px)}
+  .feat .card:hover::before{opacity:1}
+  .feat .card::before{content:""; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg,var(--accent),transparent); opacity:0; transition:.2s}
+  .feat h3{margin:0 0 6px; font-size:16px; font-weight:600; font-family:"Space Grotesk",sans-serif; display:flex; align-items:center; gap:10px}
+  .feat h3 .ic{width:32px; height:32px; border-radius:9px; background:var(--surface-3); display:grid; place-items:center; font-size:16px; flex:none}
+  .feat p{margin:0; font-size:14px; color:var(--muted)}
+  .feat code{font-family:var(--mono); font-size:11.5px; color:var(--accent); background:var(--surface-2); padding:1px 6px; border-radius:5px}
 
   /* status demo */
-  .demo{background:var(--surface); border:1px solid var(--hair); border-radius:16px; padding:22px; display:flex; gap:22px; flex-wrap:wrap; align-items:center}
-  .demo .legend{display:flex; flex-direction:column; gap:10px; flex:1; min-width:220px}
+  .demo{background:var(--surface); border:1px solid var(--hair); border-radius:18px; padding:24px; display:flex; gap:26px; flex-wrap:wrap; align-items:center}
+  .demo .legend{display:flex; flex-direction:column; gap:12px; flex:1; min-width:230px}
   .demo .legend .row{display:flex; align-items:center; gap:10px; font-size:14px; color:var(--muted)}
-  .demo .legend .dot{width:13px; height:13px; border-radius:50%}
-  .demo .mock{flex:1.4; min-width:280px}
-  .demo .btn{margin-top:6px; align-self:flex-start}
+  .demo .legend .row b{color:var(--ink); font-weight:600}
+  .demo .legend .dot{width:12px; height:12px; border-radius:50%; flex:none}
+  .demo .legend .hint{margin-top:4px; font-size:12.5px; color:var(--faint)}
+  .demo .mini{flex:1.25; min-width:280px; background:#0d0e11; border:1px solid var(--hair); border-radius:14px; padding:14px}
+  .demo .mini .tile{display:flex; gap:10px; margin-bottom:10px}
+  .demo .mini .tile div{flex:1; background:var(--surface-2); border:1px solid var(--hair); border-radius:10px; padding:10px}
+  .demo .mini .tile small{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--faint)}
+  .demo .mini .tile b{font-family:"Space Grotesk",sans-serif; font-size:16px; font-weight:700; display:flex; align-items:center; gap:6px}
+  .demo .mini .bar{height:34px; border-radius:9px; display:grid; place-items:center; font-family:"Space Grotesk",sans-serif; font-weight:700; font-size:13px}
 
   /* download */
-  .download{background:linear-gradient(180deg,var(--surface),#0d0f12); border:1px solid var(--hair-2); border-radius:18px; padding:30px; text-align:center; margin-top:10px}
-  .download .bigbtn{padding:18px 34px; font-size:17px}
-  .dlmeta{display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin-top:18px; color:var(--faint); font-size:13px}
-  .dlmeta span b{color:var(--muted); font-weight:600}
-  .note{margin-top:14px; font-size:13px; color:var(--faint)}
+  .download{display:grid; grid-template-columns:1.2fr .9fr; gap:22px; align-items:center;
+    background:linear-gradient(180deg,var(--surface),#0d0f12); border:1px solid var(--hair-2); border-radius:20px; padding:32px; margin-top:8px}
+  .download h3{font-family:"Space Grotesk",sans-serif; font-size:22px; font-weight:700; margin:0 0 6px}
+  .download p{margin:0 0 18px; color:var(--muted); font-size:14.5px; max-width:52ch}
+  .download .bigbtn{padding:18px 30px; font-size:16px}
+  .dlmeta{display:flex; flex-direction:column; gap:10px}
+  .dlmeta .row{display:flex; align-items:center; gap:11px; font-size:13px; color:var(--muted); background:var(--surface-2); border:1px solid var(--hair); border-radius:12px; padding:11px 14px}
+  .dlmeta .row b{color:var(--ink); font-weight:600}
+  .dlmeta .row .ic{width:30px; height:30px; border-radius:8px; background:var(--surface-3); display:grid; place-items:center; flex:none}
+  .note{margin-top:16px; font-size:12.5px; color:var(--faint)}
+  .note a{color:var(--accent); text-decoration:none}
+  .note a:hover{text-decoration:underline}
 
   /* footer */
   footer{border-top:1px solid var(--hair); margin-top:70px; padding-top:26px; display:flex; gap:14px; align-items:center; flex-wrap:wrap; color:var(--faint); font-size:13px}
@@ -115,6 +178,7 @@
   footer a{color:var(--muted); text-decoration:none}
   footer a:hover{color:var(--accent)}
 
+  @media (max-width:920px){ header.hero{grid-template-columns:1fr; gap:26px} .download{grid-template-columns:1fr} .feat{grid-template-columns:1fr 1fr} }
   @media (max-width:720px){ .feat{grid-template-columns:1fr} nav{flex-wrap:wrap} .navlinks{margin-left:0} }
 </style>
 
@@ -123,28 +187,64 @@
 
   <!-- =============== NAV =============== -->
   <nav>
-    <div class="logo"><span class="mark">▶</span> 9Router Controller Pro</div>
+    <div class="logo"><span class="mark">▶</span> 9Router <b>Controller</b> Pro</div>
     <div class="navlinks">
+      <a href="#app">Aplikasi</a>
       <a href="#fitur">Fitur</a>
       <a href="#status">Status</a>
-      <a href="#download">Unduh</a>
-      <a href="#dukungan">Dukungan</a>
+      <a href="#download" class="pill">Unduh</a>
     </div>
   </nav>
 
-  <!-- =============== HERO =============== -->
+  <!-- =============== HERO + APP REAL =============== -->
   <header class="hero">
-    <span class="kicker">GUI Manager untuk 9router</span>
-    <h1>Tombol <em>ON/OFF</em> untuk 9router-mu.</h1>
-    <p class="sub">Nggak perlu buka terminal dan ngetik <code>npx 9router</code> lagi. Sekali klik, proxy API lokal-mu langsung jalan — dengan status, log, dan kontrol yang jelas.</p>
-    <div class="herobtns">
-      <a class="btn primary" href="./9Router_Setup.exe" download>⬇ Unduh untuk Windows <span class="meta">· 54,8 MB</span></a>
-      <a class="btn ghost" href="#fitur">Lihat fiturnya</a>
+    <div>
+      <span class="kicker">GUI Manager untuk 9router</span>
+      <h1>Kendalikan 9router lewat <em>satu tombol</em>.</h1>
+      <p class="sub">Nggak perlu buka terminal dan ngetik <code>npx 9router</code> lagi. Sekali klik, proxy API lokal-mu langsung jalan — dengan status, log, dan kontrol yang jelas.</p>
+      <div class="herobtns">
+        <a class="btn primary" href="./9Router_Setup.exe" download>⬇ Unduh untuk Windows <span class="meta">· 54,8 MB</span></a>
+        <a class="btn ghost" href="#app">Coba tampilan <span class="meta">→</span></a>
+      </div>
+      <div class="herometa">
+        <span><b class="ok">✓</b> Windows 10/11 (64-bit)</span>
+        <span><b class="ok">✓</b> Node.js dibundel</span>
+        <span><b class="ok">✓</b> Tanpa admin</span>
+      </div>
     </div>
-    <div class="herometa">
-      <span><b>✓</b> Windows 10/11 (64-bit)</span>
-      <span><b>✓</b> Node.js dibundel</span>
-      <span><b>✓</b> Tanpa admin</span>
+
+    <div class="scene">
+      <div class="halo"></div>
+      <div class="app" id="appDemo">
+        <div class="titlebar">
+          <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+          <span class="ttl">9Router Controller Pro</span>
+          <span class="tray">▾</span>
+        </div>
+        <div class="pad">
+          <div class="head">
+            <div class="statusline"><span class="dot" id="stDot"></span><span id="stLabel">STOPPED</span></div>
+            <div class="meta">
+              <span><span id="up">Uptime 00:00:00</span></span>
+              <span><span id="ram">RAM —</span></span>
+            </div>
+          </div>
+          <button class="toggle" id="btnToggle" onclick="docToggle()">START 9ROUTER</button>
+          <div class="actions">
+            <button onclick="docAction('copy')">📋 Copy API URL</button>
+            <button onclick="docAction('restart')">🔄 Restart</button>
+            <button onclick="docAction('doctor')">🩺 Port Doctor</button>
+          </div>
+          <div class="console">
+            <div class="chead">Live Console <button class="clear" onclick="docClear()">Clear</button></div>
+            <div class="clog" id="clog"></div>
+          </div>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" checked disabled> Run on Windows Startup</label>
+          <label><input type="checkbox" checked disabled> Auto-restart on crash</label>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -195,20 +295,13 @@
         <h3><span class="ic">🚀</span> Auto-start Windows</h3>
         <p>Bisa langsung menyala saat boot (registry HKCU, per-user, tanpa admin).</p>
       </div>
-    </div>
-
-    <div style="margin-top:26px">
-      <div class="mock">
-        <div class="bar"><span class="dot g"></span><span class="dot y"></span><span class="dot r"></span><span style="flex:1;text-align:center">9Router Controller Pro</span></div>
-        <div class="body">
-          <div class="tile">
-            <div><small>Status</small><b><span class="dot" style="background:var(--green)"></span>RUNNING</b></div>
-            <div><small>Uptime</small><b>01:23:45</b></div>
-            <div><small>RAM</small><b>86 MB</b></div>
-          </div>
-          <div class="big" style="background:linear-gradient(180deg,#ff6a6a,#e53333);color:#fff">STOP 9ROUTER</div>
-          <div class="log"><span>❯</span> [14:02:11] ✓ 9router started (PID 4821)<br><span>❯</span> [14:02:13] ● listening on port 20128<br><span>❯</span> [14:02:15] → request: POST /v1/chat/completions 200 (412ms)<br><span>❯</span> [14:02:31] → request: GET /v1/models 200 (8ms)</div>
-        </div>
+      <div class="card">
+        <h3><span class="ic">📦</span> Node.js dibundel</h3>
+        <p>Installer lengkap membawa Node portable — pengguna tak perlu install Node sendiri.</p>
+      </div>
+      <div class="card">
+        <h3><span class="ic">🔐</span> Tanpa admin</h3>
+        <p>Terpasang per-user (HKCU), tidak butuh izin administrator, tidak menyentuh system folder.</p>
       </div>
     </div>
   </section>
@@ -220,20 +313,19 @@
     <p class="lead">Bukan cuma "proses ada atau tidak" — app mengecek apakah API benar-benar merespons.</p>
     <div class="demo">
       <div class="legend">
-        <div class="row"><span class="dot" style="background:var(--green)"></span> <b>RUNNING</b> — sehat, API merespons</div>
+        <div class="row"><span class="dot" style="background:var(--green-soft)"></span> <b>RUNNING</b> — sehat, API merespons</div>
         <div class="row"><span class="dot" style="background:var(--amber)"></span> <b>DEGRADED</b> — proses ada tapi tak merespons</div>
         <div class="row"><span class="dot" style="background:var(--amber)"></span> <b>EXTERNAL</b> — port aktif, bukan app yang menjalankan</div>
         <div class="row"><span class="dot" style="background:var(--red)"></span> <b>STOPPED</b> — mati</div>
-        <a class="btn ghost" href="#download">Unduh dan coba</a>
+        <div class="hint">Coba tombol START/STOP di jendela aplikasi di atas — status & log bergerak real-time.</div>
       </div>
-      <div class="mock">
-        <div class="bar"><span class="dot g"></span><span class="dot y"></span><span class="dot r"></span><span style="flex:1;text-align:center">Status</span></div>
-        <div class="body">
-          <div class="tile">
-            <div><small>Status</small><b><span class="dot" style="background:var(--green)"></span>RUNNING</b></div>
-          </div>
-          <div class="log"><span>❯</span> ✓ health OK — API merespons</div>
+      <div class="mini">
+        <div class="tile">
+          <div><small>Status</small><b><span class="dot" style="background:var(--green-soft)"></span>RUNNING</b></div>
+          <div><small>Uptime</small><b>01:23:45</b></div>
+          <div><small>RAM</small><b>86 MB</b></div>
         </div>
+        <div class="bar" style="background:linear-gradient(180deg,#c9453d,#b3261e);color:#fff">STOP 9ROUTER</div>
       </div>
     </div>
   </section>
@@ -243,13 +335,17 @@
     <div class="sec-eyebrow">Unduh</div>
     <h2>Pasang dalam satu langkah.</h2>
     <div class="download">
-      <a class="btn primary bigbtn" href="./9Router_Setup.exe" download>⬇ Unduh 9Router_Setup.exe</a>
-      <div class="dlmeta">
-        <span><b>54,8 MB</b> · installer lengkap</span>
-        <span><b>Node.js</b> sudah dibundel</span>
-        <span><b>Windows</b> 10/11 64-bit</span>
+      <div>
+        <h3>Siap jalan di Windows-mu.</h3>
+        <p>Unduh installer lengkap — Node.js sudah dibundel, tanpa admin, langsung START. Atau pakai versi portable jika sudah punya Node.</p>
+        <a class="btn primary bigbtn" href="./9Router_Setup.exe" download>⬇ Unduh 9Router_Setup.exe</a>
+        <p class="note">Alternatif: ambil dari <a href="https://github.com/Maxodus126/9router-controller/releases" target="_blank">GitHub Releases</a>.</p>
       </div>
-      <p class="note">Alternatif: ambil dari <a href="#dukungan" style="color:var(--accent)">GitHub Releases</a> atau versi portable <code>9RouterControllerPro.exe</code> (perlu Node system).</p>
+      <div class="dlmeta">
+        <div class="row"><span class="ic">📦</span> <span><b>54,8 MB</b> · installer lengkap<br><span style="font-size:11.5px;color:var(--faint)">Node.js dibundel</span></span></div>
+        <div class="row"><span class="ic">🎯</span> <span><b>Windows</b> 10/11 64-bit</span></div>
+        <div class="row"><span class="ic">🖥️</span> <span><b>Portable</b> 9RouterControllerPro.exe<br><span style="font-size:11.5px;color:var(--faint)">perlu Node system</span></span></div>
+      </div>
     </div>
   </section>
 
@@ -271,3 +367,100 @@
   </footer>
 
 </div>
+
+<script>
+/* ===== interactive real-app replica (matches app.py behavior) ===== */
+(function(){
+  var stLabel=document.getElementById('stLabel');
+  var stDot=document.getElementById('stDot');
+  var btn=document.getElementById('btnToggle');
+  var clog=document.getElementById('clog');
+  var upEl=document.getElementById('up');
+  var ramEl=document.getElementById('ram');
+  var state='stopped';           // stopped | starting | running | degraded
+  var t0=0, upInt=null, ram=0;
+
+  function stamp(){ var d=new Date(); function p(n){return (n<10?'0':'')+n} return p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds()); }
+  function log(text,cls){
+    var ln=document.createElement('div'); ln.className='ln';
+    ln.innerHTML='<span class="t">['+stamp()+']</span> '+text;
+    if(cls) ln.querySelector('span').insertAdjacentHTML('afterend',' ');
+    if(cls) ln.innerHTML='<span class="t">['+stamp()+']</span> <span class="'+cls+'">'+text+'</span>';
+    clog.insertBefore(ln, clog.firstChild);
+    while(clog.children.length>7) clog.removeChild(clog.lastChild);
+  }
+  function setStatus(kind,label){
+    var colors={stopped:['#ff5b5b','rgba(255,91,91,.5)'],running:['#4caf50','rgba(76,175,80,.5)'],degraded:['#f5b64b','rgba(245,182,75,.5)']};
+    stLabel.textContent=label;
+    stDot.style.background=colors[kind][0];
+    stDot.style.animation='none'; void stDot.offsetWidth;
+    stDot.style.animation='pulse 2.2s infinite';
+    stDot.style.boxShadow='0 0 0 0 '+colors[kind][1];
+  }
+  function fmt(s){ var h=Math.floor(s/3600),m=Math.floor(s%3600/60),sec=s%60; function p(n){return (n<10?'0':'')+n} return p(h)+':'+p(m)+':'+p(sec); }
+  function startUp(){
+    t0=Date.now(); clearInterval(upInt);
+    upInt=setInterval(function(){ upEl.textContent='Uptime '+fmt(Math.floor((Date.now()-t0)/1000)); },1000);
+    upEl.textContent='Uptime '+fmt(0);
+    ram=Math.round(70+Math.random()*25); ramEl.textContent='RAM '+ram+' MB';
+  }
+  function stopUp(){ clearInterval(upInt); upEl.textContent='Uptime 00:00:00'; ramEl.textContent='RAM —'; }
+
+  // initial empty state
+  log('Welcome to 9Router Controller Pro. Press START 9ROUTER to begin.');
+  log('Tekan START untuk mencoba demo ini','info');
+
+  window.docToggle=function(){
+    if(state==='starting') return;
+    if(state==='running'){ // stop
+      state='stopped'; stopUp();
+      btn.textContent='START 9ROUTER'; btn.className='toggle';
+      setStatus('stopped','STOPPED');
+      log('✓ 9router stopped','ok');
+      return;
+    }
+    // start
+    state='starting';
+    btn.textContent='MEMULAI…'; btn.className='toggle busy';
+    setStatus('degraded','MEMULAI…');
+    log('Starting: npx --yes 9router --tray --skip-update');
+    setTimeout(function(){
+      state='running'; startUp();
+      btn.textContent='STOP 9ROUTER'; btn.className='toggle off';
+      setStatus('running','RUNNING');
+      log('✓ Server aktif (PID '+(4800+Math.floor(Math.random()*99))+') pada port 20128.','ok');
+      log('● listening on port 20128','info');
+      setTimeout(function(){ log('✓ health OK — API merespons','ok'); },600);
+    },1100);
+  };
+  window.docAction=function(kind){
+    if(kind==='copy'){
+      log('✓ Copied to clipboard: http://localhost:20128/v1','ok');
+    } else if(kind==='restart'){
+      if(state!=='running'){ log('Restart: server belum berjalan','warn'); return; }
+      log('Restarting…','warn');
+      state='stopped'; stopUp();
+      btn.textContent='START 9ROUTER'; btn.className='toggle';
+      setStatus('stopped','STOPPED');
+      log('✓ 9router stopped','ok');
+      setTimeout(function(){
+        state='starting';
+        btn.textContent='MEMULAI…'; btn.className='toggle busy';
+        setStatus('degraded','MEMULAI…');
+        log('Starting: npx --yes 9router --tray --skip-update');
+        setTimeout(function(){
+          state='running'; startUp();
+          btn.textContent='STOP 9ROUTER'; btn.className='toggle off';
+          setStatus('running','RUNNING');
+          log('✓ Server aktif (PID '+(4800+Math.floor(Math.random()*99))+') pada port 20128.','ok');
+          setTimeout(function(){ log('✓ health OK — API merespons','ok'); },600);
+        },1100);
+      },700);
+    } else {
+      log('🩺 Scanning port 20128…','warn');
+      setTimeout(function(){ log('🩺 Port 20128 bebas.','ok'); },500);
+    }
+  };
+  window.docClear=function(){ clog.innerHTML=''; };
+})();
+</script>
