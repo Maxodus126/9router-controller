@@ -15,8 +15,7 @@ GUI Manager desktop untuk **9router** (`npx 9router`) — tombol ON/OFF tanpa pe
 - **System tray** + ikon status, single-instance guard.
 
 ## Unduh
-- **Installer lengkap:** [`9Router_Setup.exe`](site/9Router_Setup.exe) (54,8 MB) — Node.js dibundel, tanpa admin, Windows 10/11 64-bit.
-- **Portable:** [`9RouterControllerPro.exe`](dist/9RouterControllerPro.exe) — butuh Node.js terpasang.
+- **Installer lengkap:** [`9Router_Setup.exe`](9Router_Setup.exe) (57,4 MB) — Node.js dibundel, tanpa admin, Windows 10/11 64-bit.
 
 ## Instalasi (installer)
 1. Jalankan `9Router_Setup.exe`.
