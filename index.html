@@ -1,5 +1,13 @@
-<title>9Router Controller Pro</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Kendalikan 9router lewat satu tombol: Start/Stop, live console, health check jujur — tanpa membuka terminal. Windows 10/11, tanpa admin, Node.js dibundel.">
+<meta name="theme-color" content="#050608">
+<meta property="og:title" content="9Router Controller Pro">
+<meta property="og:description" content="Satu klik menjalankan API AI lokal-mu.">
+<meta property="og:type" content="website">
+<link rel="icon" href="app.ico">
+<title>9Router Controller Pro — GUI 9router</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
   /* ===== 9Router Controller Pro — landing v3 (premium editorial dark) =====
@@ -350,6 +358,29 @@
     .dlcard{padding:11px 12px}
     .bigbtn{padding:15px 22px; font-size:15px}
   }
+
+  /* ---------- quick start / steps ---------- */
+  .steps{display:grid; grid-template-columns:repeat(3,1fr); gap:14px}
+  .step{background:var(--surface); border:1px solid var(--hair); border-radius:18px; padding:24px 22px; position:relative}
+  .step .num{position:absolute; top:-14px; left:22px; font-family:var(--display); font-weight:700; font-size:19px; color:#0a0b0d; background:var(--accent); border-radius:12px; width:34px; height:34px; display:grid; place-items:center; box-shadow:0 6px 16px -6px rgba(200,255,74,.5)}
+  .step h3{font-family:var(--display); font-size:17px; font-weight:600; margin:8px 0 8px}
+  .step p{margin:0; font-size:13.5px; color:var(--muted)}
+  .step p b{color:var(--ink); font-weight:600}
+  .step code{font-family:var(--mono); font-size:12px; color:var(--accent); background:rgba(200,255,74,.08); padding:2px 7px; border-radius:6px}
+
+  /* ---------- FAQ ---------- */
+  .faq{display:flex; flex-direction:column; gap:10px; max-width:760px}
+  .faq details{background:var(--surface); border:1px solid var(--hair); border-radius:14px; padding:0 18px; transition:border-color .2s}
+  .faq details[open]{border-color:var(--hair-2)}
+  .faq summary{cursor:pointer; font-family:var(--display); font-weight:600; font-size:15px; padding:14px 0; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:12px}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"+"; font-size:20px; line-height:1; color:var(--accent); transition:transform .2s}
+  .faq details[open] summary::after{transform:rotate(45deg)}
+  .faq .ans{color:var(--muted); font-size:14px; padding:0 0 16px; max-width:64ch}
+  .faq .ans b{color:var(--ink)}
+  .faq .ans code{font-family:var(--mono); font-size:12px; color:var(--accent)}
+
+  @media (max-width:720px){ .steps{grid-template-columns:1fr} }
 </style>
 
 <div class="bgfx"><span class="orb2"></span></div>
@@ -363,7 +394,8 @@
     <div class="navlinks">
       <a href="#app">Aplikasi</a>
       <a href="#fitur">Fitur</a>
-      <a href="#status">Status</a>
+      <a href="#cara">Cara</a>
+      <a href="#faq">FAQ</a>
       <a href="#download" class="pill">Unduh</a>
     </div>
   </nav>
@@ -371,7 +403,7 @@
   <!-- =============== HERO =============== -->
   <header class="hero">
     <div class="reveal in">
-      <span class="chiptag"><span class="live"></span>GUI Manager untuk <b>9router</b></span>
+      <span class="chiptag"><span class="live"></span>GUI Manager untuk <b>9router</b> · <b>v1.1.0</b></span>
       <h1>Kendalikan 9router lewat <em>satu tombol</em>.</h1>
       <p class="sub">Tanpa buka terminal, tanpa ngetik <code>npx 9router</code>. Sekali klik, proxy AI lokal-mu langsung jalan — dengan status jujur, live console, dan kontrol penuh.</p>
       <div class="herobtns">
@@ -498,6 +530,17 @@
     </div>
   </section>
 
+  <!-- =============== CARA =============== -->
+  <section class="block" id="cara">
+    <div class="sec-eyebrow reveal">Cara pakai</div>
+    <h2 class="reveal">Langsung jalan dalam <em>3 langkah</em>.</h2>
+    <div class="steps">
+      <div class="step reveal"><span class="num">1</span><h3>Unduh installer</h3><p>Ambil <code>9Router_Setup.exe</code> — sekali unduh, semuanya sudah termasuk.</p></div>
+      <div class="step reveal"><span class="num">2</span><h3>Jalankan &amp; Install</h3><p>Klik dua kali, lalu Install. Per-user, <b>tanpa admin</b>, cepat.</p></div>
+      <div class="step reveal"><span class="num">3</span><h3>Tekan START</h3><p>App menghidupkan <code>npx 9router --tray</code> — API lokal-mu siap dipakai.</p></div>
+    </div>
+  </section>
+
   <!-- =============== STATUS =============== -->
   <section class="block" id="status">
     <div class="sec-eyebrow reveal">Status</div>
@@ -540,6 +583,19 @@
     </div>
   </section>
 
+  <!-- =============== FAQ =============== -->
+  <section class="block" id="faq">
+    <div class="sec-eyebrow reveal">FAQ</div>
+    <h2 class="reveal">Pertanyaan yang <em>sering masuk</em>.</h2>
+    <div class="faq">
+      <details class="reveal"><summary>Apakah saya perlu menginstal Node.js?</summary><div class="ans"><b>Tidak.</b> Installer membawa Node.js portable — semuanya sudah dibundel.</div></details>
+      <details class="reveal"><summary>Apakah butuh hak Administrator?</summary><div class="ans"><b>Tidak.</b> Aplikasi terpasang per-user di <code>%LOCALAPPDATA%\Programs\9Router</code>.</div></details>
+      <details class="reveal"><summary>Bagaimana cara menghapusnya?</summary><div class="ans">Lewat <b>Settings → Apps → 9Router Controller Pro → Uninstall</b> atau Control Panel. Keluar dari app dulu agar pembersihan maksimal.</div></details>
+      <details class="reveal"><summary>Apa bedanya dengan menjalankan <code>npx 9router</code> manual?</summary><div class="ans">App memberi kontrol penuh: Stop/Restart, live console, port doctor, auto-restart, dan status sehat yang jujur — tanpa mengetik apa pun.</div></details>
+      <details class="reveal"><summary>Apakah tersedia update otomatis?</summary><div class="ans">Ya. Tombol Update di app mengunduh dan memasang versi baru secara senyap, lalu menjalankan ulang.</div></details>
+    </div>
+  </section>
+
   <!-- =============== CLOSER =============== -->
   <div class="closer reveal">
     <h2>Stop <em>mengetik</em>. Klik saja.</h2>
@@ -551,8 +607,9 @@
 
   <!-- =============== FOOTER =============== -->
   <footer class="reveal">
-    <span>9Router Controller Pro v1.1.0</span>
-    <span class="end">Dibuat untuk pengguna 9router · <a href="https://github.com/Maxodus126/9router-controller" target="_blank">GitHub</a> · <a href="#download">Unduh</a></span>
+    <span>9Router Controller Pro <b style="color:var(--muted);font-weight:600">v1.1.0</b></span>
+    <span>© 2026 Maxodus126 · proyek pribadi</span>
+    <span class="end"><a href="https://github.com/Maxodus126/9router-controller/releases" target="_blank">Releases</a> · <a href="https://github.com/Maxodus126/9router-controller/issues" target="_blank">Laporkan masalah</a> · <a href="#download">Unduh</a></span>
   </footer>
 
 </div>
